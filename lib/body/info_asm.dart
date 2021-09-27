@@ -72,49 +72,50 @@ class _InfoASMState extends State<InfoASM> {
           child: GestureDetector(
             child: Container(
               child: Column(
-                children: <Widget>[
-                  Container(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Card(
-                        child: Row(
-                          children: <Widget>[
-                            Container(
-                              padding: EdgeInsets.all(10.0),
-                              width: MediaQuery.of(context).size.width * 0.3,
-                              height: MediaQuery.of(context).size.width * 0.3,
-                              child: CircleAvatar(
-                                backgroundImage:
-                                    AssetImage('images/aorsormor.png'),
-                                radius: 32,
-                              ),
-                            ),
-                            Text(
-                              '$showTitleName',
-                              style: MyConstant().textWidget3(),
-                            ),
-                            // Container(
-                            //   child: Text(
-                            //     '${showUsername!}',
-                            //     style: MyConstant().textWidget3(),
-                            //   ),
-                            // ),
-                            Text(
-                              '$nameLogin',
-                              style: MyConstant().textWidget3(),
-                            ),
-                            Text(
-                              '$showlname',
-                              style: MyConstant().textWidget3(),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  )
-                ],
+                children: <Widget>[buildCardName(context)],
               ),
             ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Container buildCardName(BuildContext context) {
+    return Container(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Card(
+          child: Row(
+            children: <Widget>[
+              Container(
+                padding: EdgeInsets.all(10.0),
+                width: MediaQuery.of(context).size.width * 0.3,
+                height: MediaQuery.of(context).size.width * 0.3,
+                child: CircleAvatar(
+                  backgroundImage: AssetImage('images/aorsormor.png'),
+                  radius: 32,
+                ),
+              ),
+              Text(
+                '$showTitleName',
+                style: MyConstant().textWidget3(),
+              ),
+              // Container(
+              //   child: Text(
+              //     '${showUsername!}',
+              //     style: MyConstant().textWidget3(),
+              //   ),
+              // ),
+              Text(
+                '$nameLogin',
+                style: MyConstant().textWidget3(),
+              ),
+              Text(
+                '$showlname',
+                style: MyConstant().textWidget3(),
+              ),
+            ],
           ),
         ),
       ),

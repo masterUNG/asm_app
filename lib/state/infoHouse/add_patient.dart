@@ -56,11 +56,18 @@ class _AddPatientState extends State<AddPatient> {
   bool loadStatus = true; // Process Load JSON
   bool status = true;
 
+  // คำนำหน้า
   String? valueChoose;
-  List listItem = ['นาย', 'นาง', 'นางสาว', 'อื่น ๆ'];
+  List listItem = ['นาย', 'นาง', 'นางสาว', 'เด็กหญิง', 'เด็กชาย'];
   String dropdownValue = 'นาย';
 
   int currentStep = 0;
+  bool isCompleted = false;
+
+  // ประเภทผู้ป่วย
+  String? typept;
+  List listItempt = ['ทั่วไป', 'ติดเตียง', 'ผู้สูงอายุ', 'ผู้ป่วยเรื้อรัง'];
+  String dropdownValuept = 'ทั่วไป';
 
   @override
   void initState() {
@@ -117,22 +124,67 @@ class _AddPatientState extends State<AddPatient> {
         ),
         centerTitle: true,
       ),
-      body: Stepper(
-        type: StepperType.horizontal,
-        steps: getSteps(),
-        currentStep: currentStep,
-        onStepContinue: () {
-          final isLastStep = currentStep == getSteps().length - 1;
-          if (isLastStep) {
-            print('completeeee');
-            // send Data to Server
-          } else {
-            setState(() => currentStep += 1);
-          }
-        },
-        onStepCancel:
-            currentStep == 0 ? null : () => setState(() => currentStep -= 1),
-      ),
+      body: isCompleted
+          ? buildCompleted()
+          : Stepper(
+              type: StepperType.horizontal,
+              steps: getSteps(),
+              currentStep: currentStep,
+              onStepContinue: () {
+                final isLastStep = currentStep == getSteps().length - 1;
+                if (isLastStep) {
+                  setState(() => isCompleted = true);
+                  print('completeeee');
+                  // send Data to Server
+                } else {
+                  setState(() => currentStep += 1);
+                }
+              },
+              onStepTapped: (step) => setState(() => currentStep = step),
+              onStepCancel: currentStep == 0
+                  ? null
+                  : () => setState(() => currentStep -= 1),
+              controlsBuilder: (context, {onStepCancel, onStepContinue}) {
+                final isLastStep = currentStep == getSteps().length - 1;
+                return Container(
+                  margin: EdgeInsets.only(top: 50),
+                  child: Row(
+                    children: <Widget>[
+                      Expanded(
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            primary: Colors.green, // background
+                            onPrimary: Colors.white, // foreground
+                          ),
+                          onPressed: onStepContinue,
+                          child: Text(
+                            isLastStep ? 'ตกลง' : 'ต่อไป',
+                            style: MyConstant().textWidget2(),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 12,
+                      ),
+                      if (currentStep != 0)
+                        Expanded(
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              primary: Colors.red, // background
+                              onPrimary: Colors.white, // foreground
+                            ),
+                            onPressed: onStepCancel,
+                            child: Text(
+                              'กลับ',
+                              style: MyConstant().textWidget2(),
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                );
+              },
+            ),
     );
   }
 
@@ -149,6 +201,7 @@ class _AddPatientState extends State<AddPatient> {
 
   List<Step> getSteps() => [
         Step(
+          state: currentStep > 0 ? StepState.complete : StepState.indexed,
           isActive: currentStep >= 0,
           title: Text(
             'ข้อมูลส่วนตัว',
@@ -164,17 +217,22 @@ class _AddPatientState extends State<AddPatient> {
                   child: Column(
                     children: <Widget>[
                       buildNamesTitle(constraints),
-                      buildNames(constraints),
+                      buildFNames(constraints),
+                      buildLNames(constraints),
                       buildGender(constraints),
                       buildBirthday(constraints),
-                      buildWeight(constraints),
-                      buildHeight(constraints),
+                      buildWeightAndHeight(constraints),
+                      // buildHeight(constraints),
                       buildTell(constraints),
                       // buildSearchAddress(constraints),
                       // buildResultSearchAddress(),
-                      buildHouseNoAndVillageNo(constraints),
-                      buildVillageAndsubDistrict(constraints),
+                      buildHouseNo(constraints),
                       // buildVillageNo(constraints),
+                      buildVillageAndsubDistrict(constraints),
+                      buildsubDistrict(constraints),
+                      buildDistrict(constraints),
+                      buildProvince(constraints),
+                      buildZipcode(constraints),
                     ],
                   ),
                 ),
@@ -183,14 +241,32 @@ class _AddPatientState extends State<AddPatient> {
           ),
         ),
         Step(
+          state: currentStep > 1 ? StepState.complete : StepState.indexed,
           isActive: currentStep >= 1,
           title: Text(
             'ข้อมูลโรคประจำตัว',
             style: MyConstant().textWidget5(),
           ),
-          content: Container(),
+          content: LayoutBuilder(
+            builder: (context, constraints) => GestureDetector(
+              onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
+              behavior: HitTestBehavior.opaque,
+              child: SingleChildScrollView(
+                child: Form(
+                  key: formkey,
+                  child: Column(
+                    children: <Widget>[
+                      buildcongenital(constraints),
+                      buildTypePatient(constraints)
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
         ),
         Step(
+          state: currentStep > 2 ? StepState.complete : StepState.indexed,
           isActive: currentStep >= 2,
           title: Text(
             'ตรวจสอบข้อมูล',
@@ -199,8 +275,71 @@ class _AddPatientState extends State<AddPatient> {
           content: Container(),
         ),
       ];
+  Row buildTypePatient(BoxConstraints constraints) {
+    return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+      Container(
+        margin: EdgeInsets.only(top: 16),
+        width: constraints.maxWidth * 0.95,
+        child: DropdownButton<String>(
+          value: dropdownValuept,
+          icon: const Icon(Icons.arrow_downward),
+          iconSize: 24,
+          elevation: 16,
+          style: const TextStyle(color: Colors.deepPurple),
+          underline: Container(
+            height: 2,
+            color: Colors.deepPurpleAccent,
+          ),
+          onChanged: (String? newValue) {
+            setState(() {
+              dropdownValuept = newValue!;
+            });
+          },
+          items: <String>['ทั่วไป', 'ติดเตียง', 'สูงอายุ', 'โรคเรื้อรัง']
+              .map<DropdownMenuItem<String>>((String value) {
+            return DropdownMenuItem<String>(
+              value: value,
+              child: Text(
+                value,
+                style: MyConstant().textWidget3(),
+              ),
+            );
+          }).toList(),
+        ),
+      ),
+    ]);
+  }
 
-  Widget buildVillageAndsubDistrict(BoxConstraints constraints) {
+  Row buildcongenital(BoxConstraints constraints) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Container(
+          width: constraints.maxWidth * 0.95,
+          child: TextFormField(
+            style: MyConstant().textWidget3(),
+            controller: congenitalController,
+            validator: (value) {
+              if (value!.isEmpty) {
+                return 'กรุณากรอกข้อมูลลงในช่องว่าง';
+              } else {
+                return null;
+              }
+            },
+            decoration: InputDecoration(
+              labelText: 'โรคประจำตัว :',
+              labelStyle: MyConstant().textWidget4(),
+              prefixIcon: Icon(
+                Icons.health_and_safety_outlined,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget buildZipcode(BoxConstraints constraints) {
     return Container(
       // margin: const EdgeInsets.only(left: 50),
       child: Padding(
@@ -211,7 +350,7 @@ class _AddPatientState extends State<AddPatient> {
               children: <Widget>[
                 Container(
                   margin: EdgeInsets.only(top: 16, right: 5),
-                  width: constraints.maxWidth * 0.45,
+                  width: constraints.maxWidth * 0.92,
                   child: TextFormField(
                     controller: addressController,
                     style: MyConstant().textWidget3(),
@@ -223,27 +362,105 @@ class _AddPatientState extends State<AddPatient> {
                       }
                     },
                     decoration: InputDecoration(
-                      labelText: 'บ้าน :',
+                      labelText: 'รหัสไปรษณีย์ :',
                       labelStyle: MyConstant().textWidget4(),
                       prefixIcon: Icon(Icons.home_filled),
-                      // enabledBorder: OutlineInputBorder(
-                      //   borderSide: BorderSide(color: MyConstant.dark),
-                      //   borderRadius: BorderRadius.circular(30),
-                      // ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: MyConstant.light),
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      errorBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.red),
-                        borderRadius: BorderRadius.circular(30),
-                      ),
                     ),
                   ),
                 ),
+              ],
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildProvince(BoxConstraints constraints) {
+    return Container(
+      // margin: const EdgeInsets.only(left: 50),
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Column(
+          children: <Widget>[
+            Row(
+              children: <Widget>[
                 Container(
-                  margin: EdgeInsets.only(top: 16),
-                  width: constraints.maxWidth * 0.45,
+                  margin: EdgeInsets.only(top: 16, right: 5),
+                  width: constraints.maxWidth * 0.92,
+                  child: TextFormField(
+                    controller: addressController,
+                    style: MyConstant().textWidget3(),
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return 'กรุณากรอกข้อมูลลงในช่องว่าง';
+                      } else {
+                        return null;
+                      }
+                    },
+                    decoration: InputDecoration(
+                      labelText: 'จังหวัด :',
+                      labelStyle: MyConstant().textWidget4(),
+                      prefixIcon: Icon(Icons.home_filled),
+                    ),
+                  ),
+                ),
+              ],
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildDistrict(BoxConstraints constraints) {
+    return Container(
+      // margin: const EdgeInsets.only(left: 50),
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Column(
+          children: <Widget>[
+            Row(
+              children: <Widget>[
+                Container(
+                  margin: EdgeInsets.only(top: 16, right: 5),
+                  width: constraints.maxWidth * 0.92,
+                  child: TextFormField(
+                    controller: addressController,
+                    style: MyConstant().textWidget3(),
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return 'กรุณากรอกข้อมูลลงในช่องว่าง';
+                      } else {
+                        return null;
+                      }
+                    },
+                    decoration: InputDecoration(
+                      labelText: 'อำเภอ :',
+                      labelStyle: MyConstant().textWidget4(),
+                      prefixIcon: Icon(Icons.home_filled),
+                    ),
+                  ),
+                ),
+              ],
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildsubDistrict(BoxConstraints constraints) {
+    return Container(
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Column(
+          children: <Widget>[
+            Row(
+              children: <Widget>[
+                Container(
+                  margin: EdgeInsets.only(top: 16, right: 5),
+                  width: constraints.maxWidth * 0.92,
                   child: TextFormField(
                     controller: addressController,
                     style: MyConstant().textWidget3(),
@@ -258,18 +475,6 @@ class _AddPatientState extends State<AddPatient> {
                       labelText: 'ตำบล :',
                       labelStyle: MyConstant().textWidget4(),
                       prefixIcon: Icon(Icons.home_filled),
-                      // enabledBorder: OutlineInputBorder(
-                      //   borderSide: BorderSide(color: MyConstant.dark),
-                      //   borderRadius: BorderRadius.circular(30),
-                      // ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: MyConstant.light),
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      errorBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.red),
-                        borderRadius: BorderRadius.circular(30),
-                      ),
                     ),
                   ),
                 ),
@@ -281,9 +486,8 @@ class _AddPatientState extends State<AddPatient> {
     );
   }
 
-  Widget buildHouseNoAndVillageNo(BoxConstraints constraints) {
+  Widget buildVillageAndsubDistrict(BoxConstraints constraints) {
     return Container(
-      // margin: const EdgeInsets.only(left: 50),
       child: Padding(
         padding: const EdgeInsets.all(10.0),
         child: Column(
@@ -292,7 +496,7 @@ class _AddPatientState extends State<AddPatient> {
               children: <Widget>[
                 Container(
                   margin: EdgeInsets.only(top: 16, right: 5),
-                  width: constraints.maxWidth * 0.45,
+                  width: constraints.maxWidth * 0.92,
                   child: TextFormField(
                     controller: addressController,
                     style: MyConstant().textWidget3(),
@@ -304,24 +508,29 @@ class _AddPatientState extends State<AddPatient> {
                       }
                     },
                     decoration: InputDecoration(
-                      labelText: 'บ้านเลขที่ :',
+                      labelText: 'บ้าน :',
                       labelStyle: MyConstant().textWidget4(),
                       prefixIcon: Icon(Icons.home_filled),
-                      // enabledBorder: OutlineInputBorder(
-                      //   borderSide: BorderSide(color: MyConstant.dark),
-                      //   borderRadius: BorderRadius.circular(30),
-                      // ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: MyConstant.light),
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      errorBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.red),
-                        borderRadius: BorderRadius.circular(30),
-                      ),
                     ),
                   ),
                 ),
+              ],
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildVillageNo(BoxConstraints constraints) {
+    return Container(
+      // margin: const EdgeInsets.only(left: 50),
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Column(
+          children: <Widget>[
+            Row(
+              children: <Widget>[
                 Container(
                   margin: EdgeInsets.only(top: 16),
                   width: constraints.maxWidth * 0.45,
@@ -343,14 +552,14 @@ class _AddPatientState extends State<AddPatient> {
                       //   borderSide: BorderSide(color: MyConstant.dark),
                       //   borderRadius: BorderRadius.circular(30),
                       // ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: MyConstant.light),
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      errorBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.red),
-                        borderRadius: BorderRadius.circular(30),
-                      ),
+                      // focusedBorder: OutlineInputBorder(
+                      //   borderSide: BorderSide(color: MyConstant.light),
+                      //   borderRadius: BorderRadius.circular(30),
+                      // ),
+                      // errorBorder: OutlineInputBorder(
+                      //   borderSide: BorderSide(color: Colors.red),
+                      //   borderRadius: BorderRadius.circular(30),
+                      // ),
                     ),
                   ),
                 ),
@@ -362,98 +571,98 @@ class _AddPatientState extends State<AddPatient> {
     );
   }
 
-  Row buildTell(BoxConstraints constraints) {
+  Widget buildHouseNo(BoxConstraints constraints) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Container(
-          margin: EdgeInsets.only(top: 16),
-          width: constraints.maxWidth * 0.75,
-          child: TextFormField(
-            controller: tellController,
-            style: MyConstant().textWidget3(),
-            maxLength: 10,
-            keyboardType: TextInputType.phone,
-            validator: (value) {
-              if (value!.isEmpty) {
-                return 'กรุณากรอกข้อมูลลงในช่องว่าง';
-              } else {
-                return null;
-              }
-            },
-            decoration: InputDecoration(
-              hintText: 'xx-xxxxxxxx',
-              labelText: 'เบอร์โทรศัพท์ :',
-              labelStyle: MyConstant().textWidget4(),
-              prefixIcon: Icon(Icons.phone),
-              enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: MyConstant.dark),
-                borderRadius: BorderRadius.circular(30),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: MyConstant.light),
-                borderRadius: BorderRadius.circular(30),
-              ),
-              errorBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.red),
-                borderRadius: BorderRadius.circular(30),
+        // margin: const EdgeInsets.only(left: 50),
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            margin: EdgeInsets.only(top: 16, right: 5),
+            width: constraints.maxWidth * 0.45,
+            child: TextFormField(
+              controller: addressController,
+              style: MyConstant().textWidget3(),
+              validator: (value) {
+                if (value!.isEmpty) {
+                  return 'กรุณากรอกข้อมูลลงในช่องว่าง';
+                } else {
+                  return null;
+                }
+              },
+              decoration: InputDecoration(
+                labelText: 'บ้านเลขที่ :',
+                labelStyle: MyConstant().textWidget4(),
+                prefixIcon: Icon(Icons.home_filled),
               ),
             ),
           ),
-        ),
-      ],
-    );
-  }
-
-  Row buildHeight(BoxConstraints constraints) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Container(
-          margin: EdgeInsets.only(top: 16),
-          width: constraints.maxWidth * 0.75,
-          child: TextFormField(
-            keyboardType: TextInputType.number,
-            style: MyConstant().textWidget3(),
-            controller: heightController,
-            validator: (value) {
-              if (value!.isEmpty) {
-                return 'กรุณากรอกข้อมูลลงในช่องว่าง';
-              } else {
-                return null;
-              }
-            },
-            decoration: InputDecoration(
-              labelText: 'ส่วนสูง :',
-              labelStyle: MyConstant().textWidget4(),
-              prefixIcon: Icon(
-                Icons.face_outlined,
+          Container(
+            margin: EdgeInsets.only(top: 16),
+            width: constraints.maxWidth * 0.45,
+            child: TextFormField(
+              controller: addressController,
+              style: MyConstant().textWidget3(),
+              validator: (value) {
+                if (value!.isEmpty) {
+                  return 'กรุณากรอกข้อมูลลงในช่องว่าง';
+                } else {
+                  return null;
+                }
+              },
+              decoration: InputDecoration(
+                labelText: 'หมู่ที่ :',
+                labelStyle: MyConstant().textWidget4(),
+                prefixIcon: Icon(Icons.home_filled),
               ),
-              enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: MyConstant.dark),
-                borderRadius: BorderRadius.circular(30),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: MyConstant.light),
-                borderRadius: BorderRadius.circular(30),
-              ),
-              errorBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.red),
-                  borderRadius: BorderRadius.circular(30)),
             ),
           ),
+        ]);
+  }
+
+  Widget buildTell(BoxConstraints constraints) {
+    return Container(
+      // margin: const EdgeInsets.only(left: 50),
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Column(
+          children: <Widget>[
+            Row(
+              children: <Widget>[
+                Container(
+                  margin: EdgeInsets.only(top: 16, right: 5),
+                  width: constraints.maxWidth * 0.92,
+                  child: TextFormField(
+                    controller: addressController,
+                    style: MyConstant().textWidget3(),
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return 'กรุณากรอกข้อมูลลงในช่องว่าง';
+                      } else {
+                        return null;
+                      }
+                    },
+                    decoration: InputDecoration(
+                      labelText: 'เบอร์โทรศัพท์ :',
+                      labelStyle: MyConstant().textWidget4(),
+                      prefixIcon: Icon(Icons.phone),
+                    ),
+                  ),
+                ),
+              ],
+            )
+          ],
         ),
-      ],
+      ),
     );
   }
 
-  Row buildWeight(BoxConstraints constraints) {
+  Row buildWeightAndHeight(BoxConstraints constraints) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
-      children: [
+      children: <Widget>[
         Container(
-          margin: EdgeInsets.only(top: 16),
-          width: constraints.maxWidth * 0.75,
+          margin: EdgeInsets.only(top: 16, right: 5),
+          width: constraints.maxWidth * 0.45,
           child: TextFormField(
             keyboardType: TextInputType.number,
             controller: weightController,
@@ -471,17 +680,29 @@ class _AddPatientState extends State<AddPatient> {
               prefixIcon: Icon(
                 Icons.face_outlined,
               ),
-              enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: MyConstant.dark),
-                borderRadius: BorderRadius.circular(30),
+            ),
+          ),
+        ),
+        Container(
+          margin: EdgeInsets.only(top: 16),
+          width: constraints.maxWidth * 0.45,
+          child: TextFormField(
+            keyboardType: TextInputType.number,
+            style: MyConstant().textWidget3(),
+            controller: heightController,
+            validator: (value) {
+              if (value!.isEmpty) {
+                return 'กรุณากรอกข้อมูลลงในช่องว่าง';
+              } else {
+                return null;
+              }
+            },
+            decoration: InputDecoration(
+              labelText: 'ส่วนสูง :',
+              labelStyle: MyConstant().textWidget4(),
+              prefixIcon: Icon(
+                Icons.face_outlined,
               ),
-              focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: MyConstant.light),
-                borderRadius: BorderRadius.circular(30),
-              ),
-              errorBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.red),
-                  borderRadius: BorderRadius.circular(30)),
             ),
           ),
         ),
@@ -587,81 +808,125 @@ class _AddPatientState extends State<AddPatient> {
     );
   }
 
-  Row buildNames(BoxConstraints constraints) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Container(
-          margin: EdgeInsets.only(top: 16),
-          width: constraints.maxWidth * 0.75,
-          child: TextFormField(
-            style: MyConstant().textWidget3(),
-            controller: fnamesController,
-            validator: (value) {
-              if (value!.isEmpty) {
-                return 'กรุณากรอกข้อมูลลงในช่องว่าง';
-              } else {
-                return null;
-              }
-            },
-            decoration: InputDecoration(
-              labelText: 'ชื่อ-นามสกุล :',
-              labelStyle: MyConstant().textWidget4(),
-              prefixIcon: Icon(
-                Icons.face_outlined,
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: MyConstant.dark),
-                borderRadius: BorderRadius.circular(30),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: MyConstant.light),
-                borderRadius: BorderRadius.circular(30),
-              ),
-              errorBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.red),
-                  borderRadius: BorderRadius.circular(30)),
-            ),
-          ),
+  Widget buildLNames(BoxConstraints constraints) {
+    return Container(
+      // margin: const EdgeInsets.only(left: 50),
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Column(
+          children: <Widget>[
+            Row(
+              children: <Widget>[
+                Container(
+                  margin: EdgeInsets.only(top: 16, right: 5),
+                  width: constraints.maxWidth * 0.92,
+                  child: TextFormField(
+                    controller: addressController,
+                    style: MyConstant().textWidget3(),
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return 'กรุณากรอกข้อมูลลงในช่องว่าง';
+                      } else {
+                        return null;
+                      }
+                    },
+                    decoration: InputDecoration(
+                      labelText: 'นามสกุล :',
+                      labelStyle: MyConstant().textWidget4(),
+                      prefixIcon: Icon(Icons.face_outlined),
+                    ),
+                  ),
+                ),
+              ],
+            )
+          ],
         ),
-      ],
+      ),
     );
   }
 
-  Row buildNamesTitle(BoxConstraints constraints) {
-    return Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-      Container(
-        margin: EdgeInsets.only(top: 5),
-        width: constraints.maxWidth * 0.45,
-        child: DropdownButton(
-          value: dropdownValue,
-          icon: const Icon(Icons.arrow_downward),
-          iconSize: 24,
-          elevation: 16,
-          style: const TextStyle(color: Colors.deepPurple),
-          underline: Container(
-            height: 2,
-            color: Colors.deepPurpleAccent,
-          ),
-          onChanged: (String? newValue) {
-            setState(() {
-              dropdownValue = newValue!;
-            });
-          },
-          items: <String>['นาย', 'นาง', 'นางสาว', 'อื่น ๆ']
-              .map<DropdownMenuItem<String>>((String value) {
-            return DropdownMenuItem<String>(
-              value: value,
-              child: Text(
-                value,
-                style: MyConstant().textWidget3(),
-              ),
-            );
-          }).toList(),
+  Widget buildFNames(BoxConstraints constraints) {
+    return Container(
+      // margin: const EdgeInsets.only(left: 50),
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Column(
+          children: <Widget>[
+            Row(
+              children: <Widget>[
+                Container(
+                  margin: EdgeInsets.only(top: 16, right: 5),
+                  width: constraints.maxWidth * 0.92,
+                  child: TextFormField(
+                    controller: addressController,
+                    style: MyConstant().textWidget3(),
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return 'กรุณากรอกข้อมูลลงในช่องว่าง';
+                      } else {
+                        return null;
+                      }
+                    },
+                    decoration: InputDecoration(
+                      labelText: 'ชื่อ :',
+                      labelStyle: MyConstant().textWidget4(),
+                      prefixIcon: Icon(Icons.face_outlined),
+                    ),
+                  ),
+                ),
+              ],
+            )
+          ],
         ),
-      )
-    ]);
+      ),
+    );
   }
+
+  Widget buildNamesTitle(BoxConstraints constraints) {
+    return Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: <Widget>[
+          Container(
+            width: constraints.maxWidth * 0.35,
+            child: Text(
+              'คำนำหน้าชื่อ',
+              style: MyConstant().textWidget3(),
+            ),
+          ),
+          Container(
+            // margin: EdgeInsets.only(top: 5),
+            width: constraints.maxWidth * 0.35,
+            child: DropdownButton(
+              value: dropdownValue,
+              icon: const Icon(Icons.arrow_downward),
+              iconSize: 24,
+              elevation: 16,
+              style: const TextStyle(color: Colors.deepPurple),
+              underline: Container(
+                height: 2,
+                color: Colors.deepPurpleAccent,
+              ),
+              onChanged: (String? newValue) {
+                setState(() {
+                  dropdownValue = newValue!;
+                });
+              },
+              items: <String>['นาย', 'นาง', 'นางสาว', 'เด็กหญิง', 'เด็กชาย']
+                  .map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(
+                    value,
+                    style: MyConstant().textWidget3(),
+                  ),
+                );
+              }).toList(),
+            ),
+          ),
+        ]);
+  }
+
+  buildCompleted() {}
 }
 
 class Debouncer {
