@@ -119,4 +119,6 @@ class UserModel {
       imageUser.hashCode ^
       type.hashCode;
   }
+
+  static fromJsonList(data) {}
 }

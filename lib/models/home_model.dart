@@ -1,20 +1,22 @@
 import 'dart:convert';
 
 class HomeModel {
-  String homeId;
-  String staffId;
-  String hostNameTitle;
-  String hostFname;
-  String hostLname;
-  String houseNo;
-  String villageNo;
-  String village;
-  String subDistrictId;
-  String districtId;
-  String provinceId;
-  String quantity;
-  String area;
-  String dateTime;
+  final String homeId;
+  final String staffId;
+  final String hostNameTitle;
+  final String hostFname;
+  final String hostLname;
+  final String houseNo;
+  final String villageNo;
+  final String village;
+  final String subDistrictId;
+  final String districtId;
+  final String provinceId;
+  final String quantity;
+  final String area;
+  final String dateTime;
+
+
   HomeModel({
     required this.homeId,
     required this.staffId,
@@ -106,7 +108,8 @@ class HomeModel {
 
   String toJson() => json.encode(toMap());
 
-  factory HomeModel.fromJson(String source) => HomeModel.fromMap(json.decode(source));
+  factory HomeModel.fromJson(String source) =>
+      HomeModel.fromMap(json.decode(source));
 
   @override
   String toString() {

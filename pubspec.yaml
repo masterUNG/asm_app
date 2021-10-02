@@ -41,6 +41,12 @@ dependencies:
   datetime_picker_formfield: ^2.0.0
   flutter_cupertino_datetime_picker: ^2.0.1
   date_field: ^2.0.1
+  dropdown_search: ^1.0.0
+  flutter_typeahead: ^3.2.1
+  autocomplete_textfield_ns: ^2.0.0
+  find_dropdown: ^1.0.0
+  simple_autocomplete_formfield: ^0.3.0
+  searchable_dropdown: ^1.1.3
 
 
 

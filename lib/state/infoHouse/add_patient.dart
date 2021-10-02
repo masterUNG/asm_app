@@ -1,13 +1,16 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:asm_app/api/home_api.dart';
 import 'package:asm_app/models/home_model.dart';
 import 'package:asm_app/models/patient_model.dart';
+import 'package:asm_app/state/infoHouse/add_homePatient.dart';
 import 'package:asm_app/utility/my_constant.dart';
-import 'package:asm_app/widget/show_image.dart';
 import 'package:asm_app/widget/show_title.dart';
+import 'package:autocomplete_textfield_ns/autocomplete_textfield_ns.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -52,6 +55,7 @@ class _AddPatientState extends State<AddPatient> {
 
   List<HomeModel> homeModel = [];
   List<HomeModel> searchHome = [];
+
   final debouncer = Debouncer(millisecond: 500);
   bool loadStatus = true; // Process Load JSON
   bool status = true;
@@ -69,10 +73,25 @@ class _AddPatientState extends State<AddPatient> {
   List listItempt = ['ทั่วไป', 'ติดเตียง', 'ผู้สูงอายุ', 'ผู้ป่วยเรื้อรัง'];
   String dropdownValuept = 'ทั่วไป';
 
+  List<String> added = [];
+  String currentText = "";
+  GlobalKey<AutoCompleteTextFieldState<String>> key = GlobalKey();
+
+  ScrollController scrollController = ScrollController();
+  int searchHomeListView = 1;
+
   @override
   void initState() {
     super.initState();
     showDataHomeFromServer();
+    scrollController.addListener(() {
+      if (scrollController.position.pixels ==
+          scrollController.position.maxScrollExtent) {
+        setState(() {
+          searchHomeListView = searchHomeListView + 1;
+        });
+      }
+    });
   }
 
   Future<Null> showDataHomeFromServer() async {
@@ -227,6 +246,7 @@ class _AddPatientState extends State<AddPatient> {
                       // buildSearchAddress(constraints),
                       // buildResultSearchAddress(),
                       buildHouseNo(constraints),
+                      buildMoo(constraints),
                       // buildVillageNo(constraints),
                       buildVillageAndsubDistrict(constraints),
                       buildsubDistrict(constraints),
@@ -399,7 +419,7 @@ class _AddPatientState extends State<AddPatient> {
                       }
                     },
                     decoration: InputDecoration(
-                      labelText: 'จังหวัด :',
+                      labelText: 'จังหวัด : ',
                       labelStyle: MyConstant().textWidget4(),
                       prefixIcon: Icon(Icons.home_filled),
                     ),
@@ -571,52 +591,107 @@ class _AddPatientState extends State<AddPatient> {
     );
   }
 
+  //  Widget buildNamesTitle(BoxConstraints constraints) {
+  //   return Row(
+  //       mainAxisAlignment: MainAxisAlignment.spaceAround,
+  //       children: <Widget>[
+  //         Container(
+  //           width: constraints.maxWidth * 0.35,
+  //           child: Text(
+  //             'คำนำหน้าชื่อ',
+  //             style: MyConstant().textWidget3(),
+  //           ),
+  //         ),
+  //         Container(
+  //           // margin: EdgeInsets.only(top: 5),
+  //           width: constraints.maxWidth * 0.35,
+  //           child: DropdownButton(
+  //             value: dropdownValue,
+  //             icon: const Icon(Icons.arrow_downward),
+  //             iconSize: 24,
+  //             elevation: 16,
+  //             style: const TextStyle(color: Colors.deepPurple),
+  //             underline: Container(
+  //               height: 2,
+  //               color: Colors.deepPurpleAccent,
+  //             ),
+  //             onChanged: (String? newValue) {
+  //               setState(() {
+  //                 dropdownValue = newValue!;
+  //               });
+  //             },
+  //             items: <String>['นาย', 'นาง', 'นางสาว', 'เด็กหญิง', 'เด็กชาย']
+  //                 .map<DropdownMenuItem<String>>((String value) {
+  //               return DropdownMenuItem<String>(
+  //                 value: value,
+  //                 child: Text(
+  //                   value,
+  //                   style: MyConstant().textWidget3(),
+  //                 ),
+  //               );
+  //             }).toList(),
+  //           ),
+  //         ),
+  //       ]);
+  // }
+
   Widget buildHouseNo(BoxConstraints constraints) {
-    return Row(
-        // margin: const EdgeInsets.only(left: 50),
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            margin: EdgeInsets.only(top: 16, right: 5),
-            width: constraints.maxWidth * 0.45,
-            child: TextFormField(
-              controller: addressController,
-              style: MyConstant().textWidget3(),
-              validator: (value) {
-                if (value!.isEmpty) {
-                  return 'กรุณากรอกข้อมูลลงในช่องว่าง';
-                } else {
-                  return null;
-                }
-              },
-              decoration: InputDecoration(
-                labelText: 'บ้านเลขที่ :',
-                labelStyle: MyConstant().textWidget4(),
-                prefixIcon: Icon(Icons.home_filled),
+    return Container(
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: ElevatedButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => SearchAndAddHomePatient(),
               ),
-            ),
+            );
+          },
+          child: Text(
+            'ข้อมูลที่อยู่',
+            style: MyConstant().textWidget2(),
           ),
-          Container(
-            margin: EdgeInsets.only(top: 16),
-            width: constraints.maxWidth * 0.45,
-            child: TextFormField(
-              controller: addressController,
-              style: MyConstant().textWidget3(),
-              validator: (value) {
-                if (value!.isEmpty) {
-                  return 'กรุณากรอกข้อมูลลงในช่องว่าง';
-                } else {
-                  return null;
-                }
-              },
-              decoration: InputDecoration(
-                labelText: 'หมู่ที่ :',
-                labelStyle: MyConstant().textWidget4(),
-                prefixIcon: Icon(Icons.home_filled),
-              ),
-            ),
-          ),
-        ]);
+        ),
+      ),
+    );
+  }
+
+  Widget buildMoo(BoxConstraints constraints) {
+    return Container(
+      // margin: const EdgeInsets.only(left: 50),
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Column(
+          children: <Widget>[
+            Row(
+              children: <Widget>[
+                Container(
+                  margin: EdgeInsets.only(top: 16, right: 5),
+                  width: constraints.maxWidth * 0.92,
+                  child: TextFormField(
+                    controller: addressController,
+                    style: MyConstant().textWidget3(),
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return 'กรุณากรอกข้อมูลลงในช่องว่าง';
+                      } else {
+                        return null;
+                      }
+                    },
+                    decoration: InputDecoration(
+                      labelText: 'หมู่ที่ :',
+                      labelStyle: MyConstant().textWidget4(),
+                      prefixIcon: Icon(Icons.phone),
+                    ),
+                  ),
+                ),
+              ],
+            )
+          ],
+        ),
+      ),
+    );
   }
 
   Widget buildTell(BoxConstraints constraints) {

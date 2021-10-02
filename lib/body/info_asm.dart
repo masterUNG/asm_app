@@ -72,7 +72,10 @@ class _InfoASMState extends State<InfoASM> {
           child: GestureDetector(
             child: Container(
               child: Column(
-                children: <Widget>[buildCardName(context)],
+                children: <Widget>[
+                  buildCardName(context),
+                  buildFunction(constraints),
+                ],
               ),
             ),
           ),
@@ -81,7 +84,13 @@ class _InfoASMState extends State<InfoASM> {
     );
   }
 
-  Container buildCardName(BuildContext context) {
+  Widget buildFunction(BoxConstraints constraints) {
+    return Container(
+      
+    );
+  }
+
+  Widget buildCardName(BuildContext context) {
     return Container(
       child: Padding(
         padding: const EdgeInsets.all(8.0),
