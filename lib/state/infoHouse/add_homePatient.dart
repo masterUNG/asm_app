@@ -25,7 +25,7 @@ class _SearchAndAddHomePatientState extends State<SearchAndAddHomePatient> {
 
   bool loadStatus = true; // Process Load JSON
   bool status = true;
-  bool isSelected = true;
+  bool isSelected = false;
 
   @override
   void initState() {
