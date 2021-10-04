@@ -1,4 +1,5 @@
 import 'package:asm_app/models/home_model.dart';
+import 'package:asm_app/utility/my_constant.dart';
 import 'package:flutter/material.dart';
 
 class AddHome extends StatefulWidget {
@@ -25,9 +26,18 @@ class _AddHomeState extends State<AddHome> {
   String? area;
   String? dateTime;
   final formkey = GlobalKey<FormState>();
-  
+
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          'เพิ่มพื้นที่สำรวจลูกน้ำยุงลาย',
+          style: MyConstant().textWidget2(),
+        ),
+        centerTitle: true,
+        backgroundColor: MyConstant.primary,
+      ),
+    );
   }
 }

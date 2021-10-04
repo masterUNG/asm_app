@@ -9,7 +9,7 @@ class DataHealth {
   String details;
   String note;
   String imgReportHealth;
-  String status;
+  String statusReportHealth;
   String dateTime;
   DataHealth({
     required this.reportHealthId,
@@ -20,7 +20,7 @@ class DataHealth {
     required this.details,
     required this.note,
     required this.imgReportHealth,
-    required this.status,
+    required this.statusReportHealth,
     required this.dateTime,
   });
 
@@ -34,7 +34,7 @@ class DataHealth {
       'details': details,
       'note': note,
       'imgReportHealth': imgReportHealth,
-      'status': status,
+      'statusReportHealth': statusReportHealth,
       'dateTime': dateTime,
     };
   }
@@ -49,7 +49,7 @@ class DataHealth {
       details: map['details'],
       note: map['note'],
       imgReportHealth: map['imgReportHealth'],
-      status: map['status'],
+      statusReportHealth: map['statusReportHealth'],
       dateTime: map['dateTime'],
     );
   }
@@ -67,7 +67,7 @@ class DataHealth {
     String? details,
     String? note,
     String? imgReportHealth,
-    String? status,
+    String? statusReportHealth,
     String? dateTime,
   }) {
     return DataHealth(
@@ -79,14 +79,14 @@ class DataHealth {
       details: details ?? this.details,
       note: note ?? this.note,
       imgReportHealth: imgReportHealth ?? this.imgReportHealth,
-      status: status ?? this.status,
+      statusReportHealth: statusReportHealth ?? this.statusReportHealth,
       dateTime: dateTime ?? this.dateTime,
     );
   }
 
   @override
   String toString() {
-    return 'DataHealth(reportHealthId: $reportHealthId, staffId: $staffId, patientId: $patientId, pressure: $pressure, bloodsugar: $bloodsugar, details: $details, note: $note, imgReportHealth: $imgReportHealth, status: $status, dateTime: $dateTime)';
+    return 'DataHealth(reportHealthId: $reportHealthId, staffId: $staffId, patientId: $patientId, pressure: $pressure, bloodsugar: $bloodsugar, details: $details, note: $note, imgReportHealth: $imgReportHealth, statusReportHealth: $statusReportHealth, dateTime: $dateTime)';
   }
 
   @override
@@ -102,7 +102,7 @@ class DataHealth {
       other.details == details &&
       other.note == note &&
       other.imgReportHealth == imgReportHealth &&
-      other.status == status &&
+      other.statusReportHealth == statusReportHealth &&
       other.dateTime == dateTime;
   }
 
@@ -116,7 +116,7 @@ class DataHealth {
       details.hashCode ^
       note.hashCode ^
       imgReportHealth.hashCode ^
-      status.hashCode ^
+      statusReportHealth.hashCode ^
       dateTime.hashCode;
   }
 }

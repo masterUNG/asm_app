@@ -55,6 +55,7 @@ class _ShowNewsState extends State<ShowNews> {
             'กระดานข่าว',
             style: MyConstant().textWidget2(),
           ),
+          centerTitle: true,
           backgroundColor: MyConstant.primary,
         ),
         body: load
@@ -63,6 +64,7 @@ class _ShowNewsState extends State<ShowNews> {
                 builder: (context, constraints) => buildListView(constraints),
               ));
   }
+
   ListView buildListView(BoxConstraints constraints) {
     return ListView.builder(
       itemCount: newsModels.length,

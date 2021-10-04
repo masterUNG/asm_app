@@ -20,13 +20,49 @@ class _ShowDataReportState extends State<ShowDataReport> {
           'ดูรายงาน อสม.',
           style: MyConstant().textWidget2(),
         ),
+        centerTitle: true,
       ),
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
             buildInfoDataPatinet(context),
-            buildInfoDataHomeLooknam(context)
+            buildInfoDataHomeLooknam(context),
+            buildInfoDataReportMonth(context),
           ],
+        ),
+      ),
+    );
+  }
+
+  Container buildInfoDataReportMonth(BuildContext context) {
+    return Container(
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
+        height: MediaQuery.of(context).size.height * 0.25,
+        width: MediaQuery.of(context).size.width * 1.20,
+        child: Card(
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              primary: MyConstant.dark,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10)),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Text(
+                'รายงานอสม. ประจำเดือน',
+                style: TextStyle(fontFamily: 'Kanit', fontSize: 22),
+              ),
+            ),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ShowDataPatientReport(),
+                ),
+              );
+            },
+          ),
         ),
       ),
     );
@@ -36,7 +72,7 @@ class _ShowDataReportState extends State<ShowDataReport> {
     return Container(
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
-        height: MediaQuery.of(context).size.height * 0.35,
+        height: MediaQuery.of(context).size.height * 0.25,
         width: MediaQuery.of(context).size.width * 1.20,
         child: Card(
           child: ElevatedButton(
@@ -70,7 +106,7 @@ class _ShowDataReportState extends State<ShowDataReport> {
     return Container(
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
-        height: MediaQuery.of(context).size.height * 0.35,
+        height: MediaQuery.of(context).size.height * 0.25,
         width: MediaQuery.of(context).size.width * 1.20,
         child: Card(
           child: ElevatedButton(

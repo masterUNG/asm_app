@@ -54,6 +54,7 @@ class _ShowKnowState extends State<ShowKnow> {
             style: MyConstant().textWidget2(),
           ),
           backgroundColor: MyConstant.primary,
+          centerTitle: true,
         ),
         body: load
             ? ShowProgress()

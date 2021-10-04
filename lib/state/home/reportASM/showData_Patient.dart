@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:asm_app/models/patient_model.dart';
+import 'package:asm_app/state/home/reportASM/showDetail_AndAddData.dart';
 import 'package:asm_app/state/infoHouse/add_patient.dart';
 import 'package:asm_app/utility/my_constant.dart';
 import 'package:asm_app/widget/show_image.dart';
@@ -10,21 +11,21 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class ShowDataPatinetFromInfoHouse extends StatefulWidget {
-  const ShowDataPatinetFromInfoHouse({Key? key}) : super(key: key);
+class ShowDataPatientAndAddReport extends StatefulWidget {
+  const ShowDataPatientAndAddReport({Key? key}) : super(key: key);
 
   @override
-  _ShowDataPatinetFromInfoHouseState createState() =>
-      _ShowDataPatinetFromInfoHouseState();
+  _ShowDataPatientAndAddReportState createState() =>
+      _ShowDataPatientAndAddReportState();
 }
 
-class _ShowDataPatinetFromInfoHouseState
-    extends State<ShowDataPatinetFromInfoHouse> {
-  List<PatientModel> patientModels = [];
+class _ShowDataPatientAndAddReportState
+    extends State<ShowDataPatientAndAddReport> {
+    List<PatientModel> patientModels = [];
   List<PatientModel> searchDataPatient = [];
   final debouncer = Debouncer(millisecond: 500);
   bool loadStatus = true; // Process Load JSON
-  bool status = true;
+  bool status = true; // Have Data
 
   @override
   void initState() {
@@ -43,57 +44,54 @@ class _ShowDataPatinetFromInfoHouseState
 
     String patientId = data![0];
     String apiShowDataPatient =
-        '${MyConstant.domain}/asmApp_Api/getAllPatient.php?isAdd=true&patientId=$patientId';
+        '${MyConstant.domain}/asm_api/getAllPatient.php?isAdd=true&patientID=$patientId';
     await Dio().get(apiShowDataPatient).then((value) async {
-      if (value.toString() != 'null') {
-        for (var item in json.decode(value.data)) {
-          PatientModel model = PatientModel.fromMap(item);
-          List<String> data = [];
-          data.add(model.patientId);
-          setState(() {
-            patientModels.add(model);
-            searchDataPatient = patientModels;
-          });
-        }
-      } else {
+      for (var item in json.decode(value.data)) {
+        PatientModel model = PatientModel.fromMap(item);
+        List<String> data = [];
+        data.add(model.patientId);
+
         setState(() {
-          status
-              ? showContent()
-              : Center(
-                  child: Text(
-                    'ยังไม่มีข้อมูล',
-                    style: MyConstant().textWidget4(),
-                  ),
-                );
+          patientModels.add(model);
+          searchDataPatient = patientModels;
         });
       }
     });
   }
 
+
+
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text(
-            'ข้อมูลผู้ป่วยภายในชุมชน',
-            style: MyConstant().textWidget2(),
-          ),
-          centerTitle: true,
-          backgroundColor: MyConstant.primary,
+      appBar: AppBar(
+        title: Text(
+          'ข้อมูลผู้ป่วย',
+          style: MyConstant().textWidget2(),
         ),
-        body: LayoutBuilder(
-          builder: (context, constraints) => SingleChildScrollView(
-            child: Column(
-              children: <Widget>[
-                buildSearch(constraints),
-                buildShowText(constraints),
-                showContent(),
-              ],
-            ),
-          ),
-        ));
+        centerTitle: true,
+        backgroundColor: MyConstant.primary,
+      ),
+      body: patientModels.length == 0
+          ? ShowProgress()
+          : LayoutBuilder(
+              builder: (context, constraints) => GestureDetector(
+                    onTap: () =>
+                        FocusScope.of(context).requestFocus(FocusNode()),
+                    behavior: HitTestBehavior.opaque,
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          buildSearch(constraints),
+                          showContent(),
+                        ],
+                      ),
+                    ),
+                  )),
+    );
   }
-
   Widget showContent() {
     return status
         ? buildListResult()
@@ -163,23 +161,23 @@ class _ShowDataPatinetFromInfoHouseState
             margin: EdgeInsets.all(8.0),
             child: ListTile(
               contentPadding: EdgeInsets.symmetric(horizontal: 8.0),
-              // onTap: () async {
-              //   SharedPreferences preferences =
-              //       await SharedPreferences.getInstance();
-              //   preferences.setString(
-              //       'patientId', patientModels[index].patientId);
-              //   Navigator.push(
-              //     context,
-              //     MaterialPageRoute(
-              //       builder: (context) => ShowDetailInfoHouse(
-              //         patientModel: patientModels[index],
-              //       ),
-              //       // builder: (context) => ShowDetailAddDataPatient(
-              //       //   patientModel: patientModels[index],
-              //       // ),
-              //     ),
-              //   ).then((value) => showDataPatientFromServer());
-              // },
+              onTap: () async {
+                SharedPreferences preferences =
+                    await SharedPreferences.getInstance();
+                preferences.setString(
+                    'patientId', patientModels[index].patientId);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ShowDetailAndAddDataHealth(
+                      patientModel: patientModels[index],
+                    ),
+                    // builder: (context) => ShowDetailAddDataPatient(
+                    //   patientModel: patientModels[index],
+                    // ),
+                  ),
+                );
+              },
               leading: ShowImage(
                 path: MyConstant.aosormor,
               ),

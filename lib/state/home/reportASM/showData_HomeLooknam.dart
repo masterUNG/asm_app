@@ -6,21 +6,20 @@ import 'package:asm_app/state/infoHouse/add_home.dart';
 import 'package:asm_app/state/infoHouse/showInfo_homeLooknam.dart';
 import 'package:asm_app/utility/my_constant.dart';
 import 'package:asm_app/widget/show_image.dart';
-
 import 'package:asm_app/widget/show_progress.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class ShowDataHomeFromInfoHouse extends StatefulWidget {
-  const ShowDataHomeFromInfoHouse({Key? key}) : super(key: key);
+class ShowDataHomeLooknamReport extends StatefulWidget {
+  const ShowDataHomeLooknamReport({Key? key}) : super(key: key);
 
   @override
-  _ShowDataHomeFromInfoHouseState createState() =>
-      _ShowDataHomeFromInfoHouseState();
+  _ShowDataHomeLooknamReportState createState() =>
+      _ShowDataHomeLooknamReportState();
 }
 
-class _ShowDataHomeFromInfoHouseState extends State<ShowDataHomeFromInfoHouse> {
+class _ShowDataHomeLooknamReportState extends State<ShowDataHomeLooknamReport> {
   List<HomeModel> homeModels = [];
   List<HomeModel> searchHome = [];
   final debouncers = Debouncer(millisecond: 500);
@@ -79,7 +78,7 @@ class _ShowDataHomeFromInfoHouseState extends State<ShowDataHomeFromInfoHouse> {
                   child: Column(
                     children: <Widget>[
                       buildSearch(constraints),
-                      buildShowText(constraints),
+                      // buildShowText(constraints),
                       showContent(),
                     ],
                   ),

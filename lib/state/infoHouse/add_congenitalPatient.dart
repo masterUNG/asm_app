@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:asm_app/models/home_model.dart';
+import 'package:asm_app/models/congenital_model.dart';
 import 'package:asm_app/utility/my_constant.dart';
 import 'package:asm_app/widget/show_image.dart';
 import 'package:asm_app/widget/show_progress.dart';
@@ -10,18 +10,16 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class SearchAndAddHomePatient extends StatefulWidget {
-  const SearchAndAddHomePatient({Key? key, index}) : super(key: key);
+class AddCongenitalPatient extends StatefulWidget {
+  const AddCongenitalPatient({Key? key}) : super(key: key);
 
   @override
-  _SearchAndAddHomePatientState createState() =>
-      _SearchAndAddHomePatientState();
+  _AddCongenitalPatientState createState() => _AddCongenitalPatientState();
 }
 
-class _SearchAndAddHomePatientState extends State<SearchAndAddHomePatient> {
-  List<HomeModel> homeModels = [];
-  List<HomeModel> searchHome = [];
-  List<HomeModel> selectedHome = [];
+class _AddCongenitalPatientState extends State<AddCongenitalPatient> {
+  List<CongenitalModel> congenitalModels = [];
+  List<CongenitalModel> searchCongenitals = [];
   final debouncers = Debouncer(millisecond: 500);
 
   bool loadStatus = true; // Process Load JSON
@@ -31,29 +29,29 @@ class _SearchAndAddHomePatientState extends State<SearchAndAddHomePatient> {
   @override
   void initState() {
     super.initState();
-    showDataAllHomeLooknam();
+    showDataAllCongenital();
   }
 
-  Future<Null> showDataAllHomeLooknam() async {
-    if (homeModels.length != 0) {
-      homeModels.clear();
+  Future<Null> showDataAllCongenital() async {
+    if (congenitalModels.length != 0) {
+      congenitalModels.clear();
     }
 
     SharedPreferences preferences = await SharedPreferences.getInstance();
     List<String>? data = preferences.getStringList('data');
-    preferences.setString('homeId', '');
-    String homeId = data![0];
+    preferences.setString('congenitalId', '');
+    String congenitalId = data![0];
 
     String apiShowAllHome =
-        '${MyConstant.domain}/asmApp_Api/getAllHome.php?isAdd=true&homeId=$homeId';
+        '${MyConstant.domain}/asmApp_Api/getAllCongenital.php?isAdd=true&congenitalId=$congenitalId';
     await Dio().get(apiShowAllHome).then((value) async {
       for (var item in json.decode(value.data)) {
-        HomeModel model = HomeModel.fromMap(item);
+        CongenitalModel model = CongenitalModel.fromMap(item);
         List<String> data = [];
-        data.add(model.homeId);
+        data.add(model.congenitalId);
         setState(() {
-          homeModels.add(model);
-          searchHome = homeModels;
+          congenitalModels.add(model);
+          searchCongenitals = congenitalModels;
         });
       }
     });
@@ -64,13 +62,13 @@ class _SearchAndAddHomePatientState extends State<SearchAndAddHomePatient> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'ข้อมูลชุมชน',
+          'ข้อมูลโรคประจำตัว',
           style: MyConstant().textWidget2(),
         ),
         backgroundColor: MyConstant.primary,
         centerTitle: true,
       ),
-      body: homeModels.length == 0
+      body: congenitalModels.length == 0
           ? ShowProgress()
           : LayoutBuilder(
               builder: (context, constraints) => GestureDetector(
@@ -86,6 +84,31 @@ class _SearchAndAddHomePatientState extends State<SearchAndAddHomePatient> {
                 ),
               ),
             ),
+    );
+  }
+
+  Widget buildSearch(BoxConstraints constraints) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: TextFormField(
+        onChanged: (value) {
+          debouncers.run(() {
+            setState(() {
+              searchCongenitals = congenitalModels
+                  .where((element) => element.congenitalName
+                      .toLowerCase()
+                      .contains(value.toLowerCase()))
+                  .toList();
+            });
+          });
+        },
+        decoration: InputDecoration(
+          hintText: 'ค้นหา',
+          hintStyle: MyConstant().textWidget4(),
+          prefixIcon: Icon(Icons.search),
+          border: OutlineInputBorder(),
+        ),
+      ),
     );
   }
 
@@ -105,7 +128,7 @@ class _SearchAndAddHomePatientState extends State<SearchAndAddHomePatient> {
         child: ListView.builder(
           shrinkWrap: true,
           physics: ScrollPhysics(),
-          itemCount: searchHome.length,
+          itemCount: searchCongenitals.length,
           itemBuilder: (context, index) => InkWell(
             child: Card(
               color: Colors.grey.shade100,
@@ -119,34 +142,9 @@ class _SearchAndAddHomePatientState extends State<SearchAndAddHomePatient> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
                     Text(
-                      searchHome[index].hostNameTitle,
-                      style: MyConstant().textWidget3(),
-                    ),
-                    Text(
-                      searchHome[index].hostFname,
-                      style: MyConstant().textWidget3(),
-                    ),
-                    Text(
-                      searchHome[index].hostLname,
+                      searchCongenitals[index].congenitalName,
                       style: MyConstant().textWidget3(),
                     )
-                  ],
-                ),
-                subtitle: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: <Widget>[
-                    Text(
-                      'บ้านเลขที่ ${searchHome[index].houseNo}',
-                      style: MyConstant().textWidget4(),
-                    ),
-                    Text(
-                      'หมู่ที่ ${searchHome[index].villageNo}',
-                      style: MyConstant().textWidget4(),
-                    ),
-                    Text(
-                      'ต.${searchHome[index].subDistrictId}',
-                      style: MyConstant().textWidget4(),
-                    ),
                   ],
                 ),
                 onTap: () {
@@ -198,20 +196,11 @@ class _SearchAndAddHomePatientState extends State<SearchAndAddHomePatient> {
                                     onPressed: () async {
                                       Map<String, dynamic> map = {};
                                       map['index'] = index;
-                                      map['homeId'] = homeModels[index].homeId;
-                                      map['houseNo'] =
-                                          homeModels[index].houseNo;
-                                      map['villageNo'] =
-                                          homeModels[index].villageNo;
-                                      map['village'] =
-                                          homeModels[index].village;
-                                      map['subDistrictId'] =
-                                          homeModels[index].subDistrictId;
-                                      map['districtId'] =
-                                          homeModels[index].districtId;
-                                      map['provinceId'] =
-                                          homeModels[index].provinceId;
-                                     
+                                      map['congenitalId'] =
+                                          congenitalModels[index].congenitalId;
+                                      map['congenitalName'] =
+                                          congenitalModels[index]
+                                              .congenitalName;
 
                                       print('### map ที่ส่งกลับไป ===> $map');
                                       Navigator.pop(context, map);
@@ -235,31 +224,6 @@ class _SearchAndAddHomePatientState extends State<SearchAndAddHomePatient> {
           ),
         ),
       );
-
-  Widget buildSearch(BoxConstraints constraints) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: TextFormField(
-        onChanged: (value) {
-          debouncers.run(() {
-            setState(() {
-              searchHome = homeModels
-                  .where((element) => element.houseNo
-                      .toLowerCase()
-                      .contains(value.toLowerCase()))
-                  .toList();
-            });
-          });
-        },
-        decoration: InputDecoration(
-          hintText: 'ค้นหา',
-          hintStyle: MyConstant().textWidget4(),
-          prefixIcon: Icon(Icons.search),
-          border: OutlineInputBorder(),
-        ),
-      ),
-    );
-  }
 }
 
 class Debouncer {
