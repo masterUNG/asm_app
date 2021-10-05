@@ -42,17 +42,18 @@ class SubDistrictsModel {
 
   factory SubDistrictsModel.fromMap(Map<String, dynamic> map) {
     return SubDistrictsModel(
-      id: map['id'],
-      code: map['code'],
-      name_in_thai: map['name_in_thai'],
-      district_id: map['district_id'],
-      zip_code: map['zip_code'],
+      id: map['id'] == null ? '' : map['id'],
+      code: map['code'] == null ? '' : map['code'],
+      name_in_thai: map['name_in_thai'] == null ? '' : map['name_in_thai'],
+      district_id: map['district_id'] == null ? '' : map['district_id'],
+      zip_code: map['zip_code'] == null ? '' : map['zip_code'],
     );
   }
 
   String toJson() => json.encode(toMap());
 
-  factory SubDistrictsModel.fromJson(String source) => SubDistrictsModel.fromMap(json.decode(source));
+  factory SubDistrictsModel.fromJson(String source) =>
+      SubDistrictsModel.fromMap(json.decode(source));
 
   @override
   String toString() {
@@ -62,21 +63,21 @@ class SubDistrictsModel {
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-  
+
     return other is SubDistrictsModel &&
-      other.id == id &&
-      other.code == code &&
-      other.name_in_thai == name_in_thai &&
-      other.district_id == district_id &&
-      other.zip_code == zip_code;
+        other.id == id &&
+        other.code == code &&
+        other.name_in_thai == name_in_thai &&
+        other.district_id == district_id &&
+        other.zip_code == zip_code;
   }
 
   @override
   int get hashCode {
     return id.hashCode ^
-      code.hashCode ^
-      name_in_thai.hashCode ^
-      district_id.hashCode ^
-      zip_code.hashCode;
+        code.hashCode ^
+        name_in_thai.hashCode ^
+        district_id.hashCode ^
+        zip_code.hashCode;
   }
 }

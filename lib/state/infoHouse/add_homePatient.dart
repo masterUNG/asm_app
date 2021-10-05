@@ -22,6 +22,7 @@ class _SearchAndAddHomePatientState extends State<SearchAndAddHomePatient> {
   List<HomeModel> homeModels = [];
   List<HomeModel> searchHome = [];
   List<HomeModel> selectedHome = [];
+
   final debouncers = Debouncer(millisecond: 500);
 
   bool loadStatus = true; // Process Load JSON
@@ -143,10 +144,10 @@ class _SearchAndAddHomePatientState extends State<SearchAndAddHomePatient> {
                       'หมู่ที่ ${searchHome[index].villageNo}',
                       style: MyConstant().textWidget4(),
                     ),
-                    Text(
-                      'ต.${searchHome[index].subDistrictId}',
-                      style: MyConstant().textWidget4(),
-                    ),
+                    // Text(
+                    //   'ต.${searchHome[index].subDistrictId}',
+                    //   style: MyConstant().textWidget4(),
+                    // ),
                   ],
                 ),
                 onTap: () {
@@ -211,7 +212,6 @@ class _SearchAndAddHomePatientState extends State<SearchAndAddHomePatient> {
                                           homeModels[index].districtId;
                                       map['provinceId'] =
                                           homeModels[index].provinceId;
-                                     
 
                                       print('### map ที่ส่งกลับไป ===> $map');
                                       Navigator.pop(context, map);

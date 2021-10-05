@@ -113,7 +113,9 @@ class _ShowDataPatientAndAddReportState
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => AddPatient(),
+                  builder: (context) => AddPatient(
+                   
+                  ),
                 ),
               ).then((value) => showDataPatientFromServer());
             },

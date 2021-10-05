@@ -100,7 +100,7 @@ class _ShowDataHomeLooknamReportState extends State<ShowDataHomeLooknamReport> {
   }
 
   Widget buildListResult() => Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(4.0),
         child: ListView.builder(
           shrinkWrap: true,
           physics: ScrollPhysics(),
@@ -129,7 +129,6 @@ class _ShowDataHomeLooknamReportState extends State<ShowDataHomeLooknamReport> {
                 path: MyConstant.aosormor,
               ),
               title: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
                   Text(
                     searchHome[index].hostNameTitle,
@@ -139,26 +138,32 @@ class _ShowDataHomeLooknamReportState extends State<ShowDataHomeLooknamReport> {
                     searchHome[index].hostFname,
                     style: MyConstant().textWidget3(),
                   ),
-                  Text(
-                    searchHome[index].hostLname,
-                    style: MyConstant().textWidget3(),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 2),
+                    child: Text(
+                      searchHome[index].hostLname,
+                      style: MyConstant().textWidget3(),
+                    ),
                   )
                 ],
               ),
               subtitle: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
                   Text(
                     'บ้านเลขที่ ${searchHome[index].houseNo}',
                     style: MyConstant().textWidget4(),
                   ),
-                  Text(
-                    'หมู่ที่ ${searchHome[index].villageNo}',
-                    style: MyConstant().textWidget4(),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 4),
+                    child: Text(
+                      'หมู่ที่ ${searchHome[index].villageNo}',
+                      style: MyConstant().textWidget4(),
+                    ),
                   ),
                 ],
               ),
-              // trailing: Icon(Icons.keyboard_arrow_right),
+              trailing: Icon(Icons.keyboard_arrow_right),
             ),
           ),
         ),

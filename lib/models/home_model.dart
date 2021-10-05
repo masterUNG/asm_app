@@ -16,7 +16,6 @@ class HomeModel {
   final String area;
   final String dateTime;
 
-
   HomeModel({
     required this.homeId,
     required this.staffId,
@@ -119,39 +118,39 @@ class HomeModel {
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-  
+
     return other is HomeModel &&
-      other.homeId == homeId &&
-      other.staffId == staffId &&
-      other.hostNameTitle == hostNameTitle &&
-      other.hostFname == hostFname &&
-      other.hostLname == hostLname &&
-      other.houseNo == houseNo &&
-      other.villageNo == villageNo &&
-      other.village == village &&
-      other.subDistrictId == subDistrictId &&
-      other.districtId == districtId &&
-      other.provinceId == provinceId &&
-      other.quantity == quantity &&
-      other.area == area &&
-      other.dateTime == dateTime;
+        other.homeId == homeId &&
+        other.staffId == staffId &&
+        other.hostNameTitle == hostNameTitle &&
+        other.hostFname == hostFname &&
+        other.hostLname == hostLname &&
+        other.houseNo == houseNo &&
+        other.villageNo == villageNo &&
+        other.village == village &&
+        other.subDistrictId == subDistrictId &&
+        other.districtId == districtId &&
+        other.provinceId == provinceId &&
+        other.quantity == quantity &&
+        other.area == area &&
+        other.dateTime == dateTime;
   }
 
   @override
   int get hashCode {
     return homeId.hashCode ^
-      staffId.hashCode ^
-      hostNameTitle.hashCode ^
-      hostFname.hashCode ^
-      hostLname.hashCode ^
-      houseNo.hashCode ^
-      villageNo.hashCode ^
-      village.hashCode ^
-      subDistrictId.hashCode ^
-      districtId.hashCode ^
-      provinceId.hashCode ^
-      quantity.hashCode ^
-      area.hashCode ^
-      dateTime.hashCode;
+        staffId.hashCode ^
+        hostNameTitle.hashCode ^
+        hostFname.hashCode ^
+        hostLname.hashCode ^
+        houseNo.hashCode ^
+        villageNo.hashCode ^
+        village.hashCode ^
+        subDistrictId.hashCode ^
+        districtId.hashCode ^
+        provinceId.hashCode ^
+        quantity.hashCode ^
+        area.hashCode ^
+        dateTime.hashCode;
   }
 }

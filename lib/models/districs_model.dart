@@ -37,10 +37,10 @@ class DistricsModel {
 
   factory DistricsModel.fromMap(Map<String, dynamic> map) {
     return DistricsModel(
-      id: map['id'],
-      code: map['code'],
-      name_thai: map['name_thai'],
-      province_id: map['province_id'],
+      id: map['id'] == null ? '' : map['id'],
+      code: map['code'] == null ? '' : map['code'],
+      name_thai: map['name_thai'] == null ? '' : map['name_thai'],
+      province_id: map['province_id'] == null ? '' : map['province_id'],
     );
   }
 

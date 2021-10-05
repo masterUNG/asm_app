@@ -403,10 +403,12 @@ class _AddPatientState extends State<AddPatient> {
                     builder: (context) => SearchAndAddHomePatient(),
                   ),
                 ).then((value) {
-                  print('### value ===> $value');
-                  HomeModel homeModel = HomeModel.fromMap(value);
-                  print('homeId ===> ${homeModel.homeId}');
-                  print('houseNo ===> ${homeModel.houseNo}');
+                  setState(() {
+                    print('### value ===> $value');
+                    HomeModel homeModel = HomeModel.fromMap(value);
+                    print('homeId ===> ${homeModel.homeId}');
+                    print('houseNo ===> ${homeModel.houseNo}');
+                  });
                 });
               },
               child: Text(
