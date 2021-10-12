@@ -87,21 +87,15 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               Text(
                 '$showTitleName',
-                style: MyConstant().textWidget3(),
+                style: MyConstant().textWidget6(),
               ),
-              // Container(
-              //   child: Text(
-              //     '${showUsername!}',
-              //     style: MyConstant().textWidget3(),
-              //   ),
-              // ),
               Text(
                 '$nameLogin',
-                style: MyConstant().textWidget3(),
+                style: MyConstant().textWidget6(),
               ),
               Text(
                 '$showlname',
-                style: MyConstant().textWidget3(),
+                style: MyConstant().textWidget6(),
               ),
             ],
           ),

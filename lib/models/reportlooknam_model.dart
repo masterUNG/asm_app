@@ -1,9 +1,9 @@
 import 'dart:convert';
 
 class ReportLooknam {
-  String reportId;
+  String reportLooknamId;
   String staffId;
-  String homeid;
+  String homeId;
   String watertotal;
   String waterfound;
   String drinktotal;
@@ -21,13 +21,13 @@ class ReportLooknam {
   String total;
   String amount;
   String sum;
-  String status;
+  String statusReportLooknam;
 
   String dateTime;
   ReportLooknam({
-    required this.reportId,
+    required this.reportLooknamId,
     required this.staffId,
-    required this.homeid,
+    required this.homeId,
     required this.watertotal,
     required this.waterfound,
     required this.drinktotal,
@@ -45,14 +45,14 @@ class ReportLooknam {
     required this.total,
     required this.amount,
     required this.sum,
-    required this.status,
+    required this.statusReportLooknam,
     required this.dateTime,
   });
 
   ReportLooknam copyWith({
-    String? reportId,
+    String? reportLooknamId,
     String? staffId,
-    String? homeid,
+    String? homeId,
     String? watertotal,
     String? waterfound,
     String? drinktotal,
@@ -70,13 +70,13 @@ class ReportLooknam {
     String? total,
     String? amount,
     String? sum,
-    String? status,
+    String? statusReportLooknam,
     String? dateTime,
   }) {
     return ReportLooknam(
-      reportId: reportId ?? this.reportId,
+      reportLooknamId: reportLooknamId ?? this.reportLooknamId,
       staffId: staffId ?? this.staffId,
-      homeid: homeid ?? this.homeid,
+      homeId: homeId ?? this.homeId,
       watertotal: watertotal ?? this.watertotal,
       waterfound: waterfound ?? this.waterfound,
       drinktotal: drinktotal ?? this.drinktotal,
@@ -94,16 +94,16 @@ class ReportLooknam {
       total: total ?? this.total,
       amount: amount ?? this.amount,
       sum: sum ?? this.sum,
-      status: status ?? this.status,
+      statusReportLooknam: statusReportLooknam ?? this.statusReportLooknam,
       dateTime: dateTime ?? this.dateTime,
     );
   }
 
   Map<String, dynamic> toMap() {
     return {
-      'reportId': reportId,
+      'reportLooknamId': reportLooknamId,
       'staffId': staffId,
-      'homeid': homeid,
+      'homeId': homeId,
       'watertotal': watertotal,
       'waterfound': waterfound,
       'drinktotal': drinktotal,
@@ -121,16 +121,16 @@ class ReportLooknam {
       'total': total,
       'amount': amount,
       'sum': sum,
-      'status': status,
+      'statusReportLooknam': statusReportLooknam,
       'dateTime': dateTime,
     };
   }
 
   factory ReportLooknam.fromMap(Map<String, dynamic> map) {
     return ReportLooknam(
-      reportId: map['reportId'],
+      reportLooknamId: map['reportLooknamId'],
       staffId: map['staffId'],
-      homeid: map['homeid'],
+      homeId: map['homeId'],
       watertotal: map['watertotal'],
       waterfound: map['waterfound'],
       drinktotal: map['drinktotal'],
@@ -148,7 +148,7 @@ class ReportLooknam {
       total: map['total'],
       amount: map['amount'],
       sum: map['sum'],
-      status: map['status'],
+      statusReportLooknam: map['statusReportLooknam'],
       dateTime: map['dateTime'],
     );
   }
@@ -160,61 +160,61 @@ class ReportLooknam {
 
   @override
   String toString() {
-    return 'ReportLooknam(reportId: $reportId, staffId: $staffId, homeid: $homeid, watertotal: $watertotal, waterfound: $waterfound, drinktotal: $drinktotal, drinkfound: $drinkfound, containerholdertotal: $containerholdertotal, containerholderfound: $containerholderfound, placemattotal: $placemattotal, placematfound: $placematfound, vasetotal: $vasetotal, vasefound: $vasefound, tiretotal: $tiretotal, tirefound: $tirefound, othercontainertotal: $othercontainertotal, othercontainerfound: $othercontainerfound, total: $total, amount: $amount, sum: $sum, status: $status, dateTime: $dateTime)';
+    return 'ReportLooknam(reportLooknamId: $reportLooknamId, staffId: $staffId, homeId: $homeId, watertotal: $watertotal, waterfound: $waterfound, drinktotal: $drinktotal, drinkfound: $drinkfound, containerholdertotal: $containerholdertotal, containerholderfound: $containerholderfound, placemattotal: $placemattotal, placematfound: $placematfound, vasetotal: $vasetotal, vasefound: $vasefound, tiretotal: $tiretotal, tirefound: $tirefound, othercontainertotal: $othercontainertotal, othercontainerfound: $othercontainerfound, total: $total, amount: $amount, sum: $sum, statusReportLooknam: $statusReportLooknam, dateTime: $dateTime)';
   }
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-
+  
     return other is ReportLooknam &&
-        other.reportId == reportId &&
-        other.staffId == staffId &&
-        other.homeid == homeid &&
-        other.watertotal == watertotal &&
-        other.waterfound == waterfound &&
-        other.drinktotal == drinktotal &&
-        other.drinkfound == drinkfound &&
-        other.containerholdertotal == containerholdertotal &&
-        other.containerholderfound == containerholderfound &&
-        other.placemattotal == placemattotal &&
-        other.placematfound == placematfound &&
-        other.vasetotal == vasetotal &&
-        other.vasefound == vasefound &&
-        other.tiretotal == tiretotal &&
-        other.tirefound == tirefound &&
-        other.othercontainertotal == othercontainertotal &&
-        other.othercontainerfound == othercontainerfound &&
-        other.total == total &&
-        other.amount == amount &&
-        other.sum == sum &&
-        other.status == status &&
-        other.dateTime == dateTime;
+      other.reportLooknamId == reportLooknamId &&
+      other.staffId == staffId &&
+      other.homeId == homeId &&
+      other.watertotal == watertotal &&
+      other.waterfound == waterfound &&
+      other.drinktotal == drinktotal &&
+      other.drinkfound == drinkfound &&
+      other.containerholdertotal == containerholdertotal &&
+      other.containerholderfound == containerholderfound &&
+      other.placemattotal == placemattotal &&
+      other.placematfound == placematfound &&
+      other.vasetotal == vasetotal &&
+      other.vasefound == vasefound &&
+      other.tiretotal == tiretotal &&
+      other.tirefound == tirefound &&
+      other.othercontainertotal == othercontainertotal &&
+      other.othercontainerfound == othercontainerfound &&
+      other.total == total &&
+      other.amount == amount &&
+      other.sum == sum &&
+      other.statusReportLooknam == statusReportLooknam &&
+      other.dateTime == dateTime;
   }
 
   @override
   int get hashCode {
-    return reportId.hashCode ^
-        staffId.hashCode ^
-        homeid.hashCode ^
-        watertotal.hashCode ^
-        waterfound.hashCode ^
-        drinktotal.hashCode ^
-        drinkfound.hashCode ^
-        containerholdertotal.hashCode ^
-        containerholderfound.hashCode ^
-        placemattotal.hashCode ^
-        placematfound.hashCode ^
-        vasetotal.hashCode ^
-        vasefound.hashCode ^
-        tiretotal.hashCode ^
-        tirefound.hashCode ^
-        othercontainertotal.hashCode ^
-        othercontainerfound.hashCode ^
-        total.hashCode ^
-        amount.hashCode ^
-        sum.hashCode ^
-        status.hashCode ^
-        dateTime.hashCode;
+    return reportLooknamId.hashCode ^
+      staffId.hashCode ^
+      homeId.hashCode ^
+      watertotal.hashCode ^
+      waterfound.hashCode ^
+      drinktotal.hashCode ^
+      drinkfound.hashCode ^
+      containerholdertotal.hashCode ^
+      containerholderfound.hashCode ^
+      placemattotal.hashCode ^
+      placematfound.hashCode ^
+      vasetotal.hashCode ^
+      vasefound.hashCode ^
+      tiretotal.hashCode ^
+      tirefound.hashCode ^
+      othercontainertotal.hashCode ^
+      othercontainerfound.hashCode ^
+      total.hashCode ^
+      amount.hashCode ^
+      sum.hashCode ^
+      statusReportLooknam.hashCode ^
+      dateTime.hashCode;
   }
 }

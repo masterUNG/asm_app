@@ -85,9 +85,7 @@ class _InfoASMState extends State<InfoASM> {
   }
 
   Widget buildFunction(BoxConstraints constraints) {
-    return Container(
-      
-    );
+    return Container();
   }
 
   Widget buildCardName(BuildContext context) {
@@ -108,7 +106,7 @@ class _InfoASMState extends State<InfoASM> {
               ),
               Text(
                 '$showTitleName',
-                style: MyConstant().textWidget3(),
+                style: MyConstant().textWidget6(),
               ),
               // Container(
               //   child: Text(
@@ -118,11 +116,11 @@ class _InfoASMState extends State<InfoASM> {
               // ),
               Text(
                 '$nameLogin',
-                style: MyConstant().textWidget3(),
+                style: MyConstant().textWidget6(),
               ),
               Text(
                 '$showlname',
-                style: MyConstant().textWidget3(),
+                style: MyConstant().textWidget6(),
               ),
             ],
           ),

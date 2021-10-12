@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:asm_app/models/home_model.dart';
 import 'package:asm_app/state/infoHouse/add_home.dart';
+import 'package:asm_app/state/infoHouse/add_looknamReport.dart';
 import 'package:asm_app/state/infoHouse/showInfo_homeLooknam.dart';
 import 'package:asm_app/utility/my_constant.dart';
 import 'package:asm_app/widget/show_image.dart';
@@ -40,6 +41,7 @@ class _ShowDataHomeLooknamReportState extends State<ShowDataHomeLooknamReport> {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     List<String>? data = preferences.getStringList('data');
     preferences.setString('homeId', '');
+
     String homeId = data![0];
 
     String apiShowAllHome =
@@ -105,65 +107,65 @@ class _ShowDataHomeLooknamReportState extends State<ShowDataHomeLooknamReport> {
           shrinkWrap: true,
           physics: ScrollPhysics(),
           itemCount: searchHome.length,
-          itemBuilder: (context, index) => Card(
-            color: Colors.grey.shade100,
-            margin: EdgeInsets.all(8.0),
-            child: ListTile(
-              contentPadding: EdgeInsets.symmetric(horizontal: 8.0),
-              onTap: () async {
-                SharedPreferences preferences =
-                    await SharedPreferences.getInstance();
-                preferences.setString('homeId', homeModels[index].homeId);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ShowInfoHomeLooknam(
-                      homelooknam: homeModels[index],
-                      // homeModel: homeModels[index],
-                      // patientModel: patientModels[index],
+          itemBuilder: (context, index) => InkWell(
+            child: Card(
+              color: Colors.grey.shade100,
+              margin: EdgeInsets.all(8.0),
+              child: ListTile(
+                contentPadding: EdgeInsets.symmetric(horizontal: 8.0),
+                onTap: () async {
+                  SharedPreferences preferences =
+                      await SharedPreferences.getInstance();
+                  preferences.setString('homeId', homeModels[index].homeId);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ShowInfoHomeLooknam(
+                        homelooknam: homeModels[index],
+                      ),
                     ),
-                  ),
-                ).then((value) => showDataAllHomeLooknam());
-              },
-              leading: ShowImage(
-                path: MyConstant.aosormor,
-              ),
-              title: Row(
-                children: <Widget>[
-                  Text(
-                    searchHome[index].hostNameTitle,
-                    style: MyConstant().textWidget3(),
-                  ),
-                  Text(
-                    searchHome[index].hostFname,
-                    style: MyConstant().textWidget3(),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 2),
-                    child: Text(
-                      searchHome[index].hostLname,
+                  ).then((value) => showDataAllHomeLooknam());
+                },
+                leading: ShowImage(
+                  path: MyConstant.aosormor,
+                ),
+                title: Row(
+                  children: <Widget>[
+                    Text(
+                      searchHome[index].hostNameTitle,
                       style: MyConstant().textWidget3(),
                     ),
-                  )
-                ],
-              ),
-              subtitle: Row(
-                // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  Text(
-                    'บ้านเลขที่ ${searchHome[index].houseNo}',
-                    style: MyConstant().textWidget4(),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 4),
-                    child: Text(
-                      'หมู่ที่ ${searchHome[index].villageNo}',
+                    Text(
+                      searchHome[index].hostFname,
+                      style: MyConstant().textWidget3(),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 2),
+                      child: Text(
+                        searchHome[index].hostLname,
+                        style: MyConstant().textWidget3(),
+                      ),
+                    )
+                  ],
+                ),
+                subtitle: Row(
+                  // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
+                    Text(
+                      'บ้านเลขที่ ${searchHome[index].houseNo} หมู่ที่ ${searchHome[index].villageNo} ',
                       style: MyConstant().textWidget4(),
                     ),
-                  ),
-                ],
+                    // Padding(
+                    //   padding: const EdgeInsets.only(left: 4),
+                    //   child: Text(
+                    //     'หมู่ที่ ${searchHome[index].villageNo}',
+                    //     style: MyConstant().textWidget4(),
+                    //   ),
+                    // ),
+                  ],
+                ),
+                trailing: Icon(Icons.keyboard_arrow_right),
               ),
-              trailing: Icon(Icons.keyboard_arrow_right),
             ),
           ),
         ),
@@ -178,7 +180,7 @@ class _ShowDataHomeLooknamReportState extends State<ShowDataHomeLooknamReport> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => AddHome(),
+                  builder: (context) => AddLooknamReport(),
                 ),
               ).then((value) => showDataAllHomeLooknam());
             },

@@ -240,20 +240,27 @@ class _AddPatientState extends State<AddPatient> {
               child: SingleChildScrollView(
                 child: Form(
                   key: formkey,
-                  child: Column(
-                    children: <Widget>[
-                      buildNamesTitle(constraints),
-                      buildFNames(constraints),
-                      buildLNames(constraints),
-                      buildGender(constraints),
-                      buildBirthday(constraints),
-                      buildWeightAndHeight(constraints),
-                      // buildHeight(constraints),
-                      buildTell(constraints),
-                      // buildSearchAddress(constraints),
-                      // buildResultSearchAddress(),
-                      buildHouseNo(constraints),
-                    ],
+                  child: Container(
+                    // padding:
+                    //     EdgeInsets.symmetric(horizontal: 2.0, vertical: 2.0),
+                    height: MediaQuery.of(context).size.height * 0.85,
+                    child: Card(
+                      child: Column(
+                        children: <Widget>[
+                          buildNamesTitle(constraints),
+                          buildFNames(constraints),
+                          buildLNames(constraints),
+                          buildGender(constraints),
+                          buildBirthday(constraints),
+                          buildWeightAndHeight(constraints),
+                          // buildHeight(constraints),
+                          buildTell(constraints),
+                          // buildSearchAddress(constraints),
+                          // buildResultSearchAddress(),
+                          // buildHouseNo(constraints),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -274,11 +281,19 @@ class _AddPatientState extends State<AddPatient> {
               child: SingleChildScrollView(
                 child: Form(
                   key: formkey,
-                  child: Column(
-                    children: <Widget>[
-                      buildcongenital(constraints),
-                      buildTypePatient(constraints)
-                    ],
+                  child: Container(
+                    
+                    height: MediaQuery.of(context).size.height * 0.5,
+                    // padding:
+                    //     EdgeInsets.symmetric(horizontal: 2.0, vertical: 2.0),
+                    child: Card(
+                      child: Column(
+                        children: <Widget>[
+                          buildcongenital(constraints),
+                          buildTypePatient(constraints)
+                        ],
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -404,19 +419,16 @@ class _AddPatientState extends State<AddPatient> {
                   ),
                 ).then((value) {
                   print('### value ===> $value');
-                  HomeModel homeModel = HomeModel.fromMap(value);
-                  print('homeId ===> ${homeModel.homeId}');
-                  print('houseNo ===> ${homeModel.houseNo}');
                 });
               },
               child: Text(
-                'ข้อมูลที่อยู่',
+                'ข้อมูลที่อยู่ ',
                 style: MyConstant().textWidget2(),
               ),
             ),
           ),
         ),
-        Text('data')
+        Text('data ')
       ],
     );
   }
@@ -432,7 +444,7 @@ class _AddPatientState extends State<AddPatient> {
               children: <Widget>[
                 Container(
                   margin: EdgeInsets.only(top: 16, right: 5),
-                  width: constraints.maxWidth * 0.92,
+                  width: constraints.maxWidth * 0.85,
                   child: TextFormField(
                     controller: addressController,
                     style: MyConstant().textWidget3(),
@@ -621,7 +633,7 @@ class _AddPatientState extends State<AddPatient> {
               children: <Widget>[
                 Container(
                   margin: EdgeInsets.only(top: 16, right: 5),
-                  width: constraints.maxWidth * 0.92,
+                  width: constraints.maxWidth * 0.85,
                   child: TextFormField(
                     controller: addressController,
                     style: MyConstant().textWidget3(),
@@ -658,7 +670,7 @@ class _AddPatientState extends State<AddPatient> {
               children: <Widget>[
                 Container(
                   margin: EdgeInsets.only(top: 16, right: 5),
-                  width: constraints.maxWidth * 0.92,
+                  width: constraints.maxWidth * 0.85,
                   child: TextFormField(
                     controller: addressController,
                     style: MyConstant().textWidget3(),

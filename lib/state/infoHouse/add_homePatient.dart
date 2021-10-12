@@ -5,7 +5,6 @@ import 'package:asm_app/models/home_model.dart';
 import 'package:asm_app/utility/my_constant.dart';
 import 'package:asm_app/widget/show_image.dart';
 import 'package:asm_app/widget/show_progress.dart';
-import 'package:asm_app/widget/show_title.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -104,136 +103,59 @@ class _SearchAndAddHomePatientState extends State<SearchAndAddHomePatient> {
   Widget buildListResult() => Padding(
         padding: const EdgeInsets.all(16.0),
         child: ListView.builder(
-          shrinkWrap: true,
-          physics: ScrollPhysics(),
-          itemCount: searchHome.length,
-          itemBuilder: (context, index) => InkWell(
-            child: Card(
-              color: Colors.grey.shade100,
-              margin: EdgeInsets.all(8.0),
-              child: ListTile(
-                contentPadding: EdgeInsets.symmetric(horizontal: 8.0),
-                leading: ShowImage(
-                  path: MyConstant.aosormor,
-                ),
-                title: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: <Widget>[
-                    Text(
-                      searchHome[index].hostNameTitle,
-                      style: MyConstant().textWidget3(),
-                    ),
-                    Text(
-                      searchHome[index].hostFname,
-                      style: MyConstant().textWidget3(),
-                    ),
-                    Text(
-                      searchHome[index].hostLname,
-                      style: MyConstant().textWidget3(),
-                    )
-                  ],
-                ),
-                subtitle: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: <Widget>[
-                    Text(
-                      'บ้านเลขที่ ${searchHome[index].houseNo}',
-                      style: MyConstant().textWidget4(),
-                    ),
-                    Text(
-                      'หมู่ที่ ${searchHome[index].villageNo}',
-                      style: MyConstant().textWidget4(),
-                    ),
-                    // Text(
-                    //   'ต.${searchHome[index].subDistrictId}',
-                    //   style: MyConstant().textWidget4(),
-                    // ),
-                  ],
-                ),
-                onTap: () {
-                  if (isSelected == true) {
-                    showDialog(
-                      context: context,
-                      builder: (context) => Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                        child: SimpleDialog(
-                          title: ListTile(
-                            leading: ShowImage(path: MyConstant.aosormor),
-                            title: ShowTitle(
-                              title: 'คุณต้องการเลือกข้อมูลนี้ใช่หรือไม่',
-                              textStyle: MyConstant().textWidget(),
-                            ),
-                            subtitle: ShowTitle(
-                                title: 'กดตกลงเพื่อบันทึกข้อมูล',
-                                textStyle: MyConstant().h3Style()),
-                          ),
-                          children: <Widget>[
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: <Widget>[
-                                Container(
-                                  margin: EdgeInsets.only(top: 15),
-                                  width: 130,
-                                  height: 40,
-                                  child: ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                      primary: Colors.red, // background
-                                      onPrimary: Colors.white, // foreground
-                                    ),
-                                    onPressed: () => Navigator.pop(context),
-                                    child: Text(
-                                      'ยกเลิก',
-                                      style: MyConstant().textWidget2(),
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                  margin: EdgeInsets.only(top: 15),
-                                  width: 130,
-                                  height: 40,
-                                  child: ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                      primary: Colors.green, // background
-                                      onPrimary: Colors.white, // foreground
-                                    ),
-                                    onPressed: () async {
-                                      Map<String, dynamic> map = {};
-                                      map['index'] = index;
-                                      map['homeId'] = homeModels[index].homeId;
-                                      map['houseNo'] =
-                                          homeModels[index].houseNo;
-                                      map['villageNo'] =
-                                          homeModels[index].villageNo;
-                                      map['village'] =
-                                          homeModels[index].village;
-                                      map['subDistrictId'] =
-                                          homeModels[index].subDistrictId;
-                                      map['districtId'] =
-                                          homeModels[index].districtId;
-                                      map['provinceId'] =
-                                          homeModels[index].provinceId;
-
-                                      print('### map ที่ส่งกลับไป ===> $map');
-                                      Navigator.pop(context, map);
-                                    },
-                                    child: Text(
-                                      'ยืนยัน',
-                                      style: MyConstant().textWidget2(),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
+            shrinkWrap: true,
+            physics: ScrollPhysics(),
+            itemCount: searchHome.length,
+            itemBuilder: (context, index) => InkWell(
+                    child: Card(
+                  color: Colors.grey.shade100,
+                  margin: EdgeInsets.all(8.0),
+                  child: ListTile(
+                      contentPadding: EdgeInsets.symmetric(horizontal: 8.0),
+                      leading: ShowImage(
+                        path: MyConstant.aosormor,
                       ),
-                    );
-                  }
-                },
-              ),
-            ),
-          ),
-        ),
+                      title: Row(
+                        children: <Widget>[
+                          Text(
+                            searchHome[index].hostNameTitle,
+                            style: MyConstant().textWidget3(),
+                          ),
+                          Text(
+                            searchHome[index].hostFname,
+                            style: MyConstant().textWidget3(),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 2),
+                            child: Text(
+                              searchHome[index].hostLname,
+                              style: MyConstant().textWidget3(),
+                            ),
+                          )
+                        ],
+                      ),
+                      subtitle: Row(
+                        children: <Widget>[
+                          Text(
+                            'บ้านเลขที่ ${searchHome[index].houseNo} หมู่ที่ ${searchHome[index].villageNo}',
+                            style: MyConstant().textWidget4(),
+                          ),
+                        ],
+                      ),
+                      onTap: () {
+                        Map<String, dynamic> map = {};
+                        map['index'] = index;
+                        map['homeId'] = homeModels[index].homeId;
+                        map['houseNo'] = homeModels[index].houseNo;
+                        map['villageNo'] = homeModels[index].villageNo;
+                        map['village'] = homeModels[index].village;
+                        map['subDistrictId'] = homeModels[index].subDistrictId;
+                        map['districtId'] = homeModels[index].districtId;
+                        map['provinceId'] = homeModels[index].provinceId;
+                        print('### map ที่ส่งกลับไป ===> $map');
+                        Navigator.pop(context, map);
+                      }),
+                ))),
       );
 
   Widget buildSearch(BoxConstraints constraints) {

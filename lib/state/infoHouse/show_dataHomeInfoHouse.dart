@@ -3,7 +3,7 @@ import 'dart:convert';
 
 import 'package:asm_app/models/home_model.dart';
 import 'package:asm_app/state/infoHouse/add_home.dart';
-import 'package:asm_app/state/infoHouse/showInfo_homeLooknam.dart';
+import 'package:asm_app/state/infoHouse/show_detailInfoHouse.dart';
 import 'package:asm_app/utility/my_constant.dart';
 import 'package:asm_app/widget/show_image.dart';
 
@@ -101,7 +101,7 @@ class _ShowDataHomeFromInfoHouseState extends State<ShowDataHomeFromInfoHouse> {
   }
 
   Widget buildListResult() => Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(4.0),
         child: ListView.builder(
           shrinkWrap: true,
           physics: ScrollPhysics(),
@@ -118,10 +118,8 @@ class _ShowDataHomeFromInfoHouseState extends State<ShowDataHomeFromInfoHouse> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => ShowInfoHomeLooknam(
-                      homelooknam: homeModels[index],
-                      // homeModel: homeModels[index],
-                      // patientModel: patientModels[index],
+                    builder: (context) => ShowDetailInfoHouse(
+                      detailhome: homeModels[index],
                     ),
                   ),
                 ).then((value) => showDataAllHomeLooknam());
@@ -130,7 +128,6 @@ class _ShowDataHomeFromInfoHouseState extends State<ShowDataHomeFromInfoHouse> {
                 path: MyConstant.aosormor,
               ),
               title: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
                   Text(
                     searchHome[index].hostNameTitle,
@@ -140,26 +137,28 @@ class _ShowDataHomeFromInfoHouseState extends State<ShowDataHomeFromInfoHouse> {
                     searchHome[index].hostFname,
                     style: MyConstant().textWidget3(),
                   ),
-                  Text(
-                    searchHome[index].hostLname,
-                    style: MyConstant().textWidget3(),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 2),
+                    child: Text(
+                      searchHome[index].hostLname,
+                      style: MyConstant().textWidget3(),
+                    ),
                   )
                 ],
               ),
               subtitle: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
                   Text(
-                    'บ้านเลขที่ ${searchHome[index].houseNo}',
+                    'บ้านเลขที่ ${searchHome[index].houseNo} หมู่ที่ ${searchHome[index].villageNo}',
                     style: MyConstant().textWidget4(),
                   ),
-                  Text(
-                    'หมู่ที่ ${searchHome[index].villageNo}',
-                    style: MyConstant().textWidget4(),
-                  ),
+                  // Text(
+                  //   'หมู่ที่ ${searchHome[index].villageNo}',
+                  //   style: MyConstant().textWidget4(),
+                  // ),
                 ],
               ),
-              // trailing: Icon(Icons.keyboard_arrow_right),
+              trailing: Icon(Icons.keyboard_arrow_right),
             ),
           ),
         ),

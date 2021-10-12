@@ -96,19 +96,25 @@ class MyConstant {
       );
 
   TextStyle textWidget3() => TextStyle(
-        fontSize: 18,
+        fontSize: 16,
         fontFamily: 'Kanit',
         color: Colors.black,
       );
 
   TextStyle textWidget4() => TextStyle(
-        fontSize: 18,
+        fontSize: 16,
         fontFamily: 'Kanit',
         color: Colors.grey,
       );
 
   TextStyle textWidget5() => TextStyle(
         fontSize: 12,
+        fontFamily: 'Kanit',
+        color: Colors.black,
+      );
+
+  TextStyle textWidget6() => TextStyle(
+        fontSize: 18,
         fontFamily: 'Kanit',
         color: Colors.black,
       );

@@ -1,9 +1,11 @@
 import 'dart:convert';
 
 import 'package:asm_app/models/home_model.dart';
+import 'package:asm_app/models/patient_model.dart';
 import 'package:asm_app/models/reportlooknam_model.dart';
 import 'package:asm_app/models/user_model.dart';
 import 'package:asm_app/state/infoHouse/add_looknamReport.dart';
+import 'package:asm_app/state/infoHouse/add_patient.dart';
 import 'package:asm_app/utility/my_constant.dart';
 import 'package:asm_app/widget/show_image.dart';
 import 'package:asm_app/widget/show_progress.dart';
@@ -12,18 +14,20 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class ShowInfoHomeLooknam extends StatefulWidget {
+class ShowInfoHomeAndPateint extends StatefulWidget {
   final HomeModel homelooknam;
-  const ShowInfoHomeLooknam({Key? key, required this.homelooknam})
+  const ShowInfoHomeAndPateint({Key? key, required this.homelooknam})
       : super(key: key);
 
   @override
-  _ShowInfoHomeLooknamState createState() => _ShowInfoHomeLooknamState();
+  _ShowInfoHomeAndPateintState createState() => _ShowInfoHomeAndPateintState();
 }
 
-class _ShowInfoHomeLooknamState extends State<ShowInfoHomeLooknam> {
+class _ShowInfoHomeAndPateintState extends State<ShowInfoHomeAndPateint> {
   HomeModel? homelooknam;
   UserModel? userModel;
+  PatientModel? patientModel;
+  List<PatientModel> patientModels = [];
   List<HomeModel> homelooknams = [];
   List<HomeModel> homes = [];
   ReportLooknam? reportLooknam;
@@ -50,7 +54,6 @@ class _ShowInfoHomeLooknamState extends State<ShowInfoHomeLooknam> {
       loadStatus = true;
       status = true;
     }
-
     SharedPreferences preferences = await SharedPreferences.getInstance();
     String homeId = preferences.getString('homeId')!;
     String userId = preferences.getString('userId')!;
@@ -78,34 +81,44 @@ class _ShowInfoHomeLooknamState extends State<ShowInfoHomeLooknam> {
   }
 
   Future<Null> loadDetailFromAPI() async {
-    if (reportlooknams.length != 0) {
-      reportlooknams.clear();
+    if (patientModels.length != 0) {
+      patientModels.clear();
       loadStatus = true;
       status = true;
     }
 
     SharedPreferences preferences = await SharedPreferences.getInstance();
     String homeId = preferences.getString('homeId')!;
+    // String patientId = preferences.getString('patientId')!;
+    // preferences.setString('staffId', '');
+    // preferences.setString('homeId', '');
+    // preferences.setString('patientId', '');
 
     String apiGetReportLooknam =
-        '${MyConstant.domain}/asmApp_Api/show_dataHomeLooknam.php?isAdd=true&homeId=$homeId';
+        '${MyConstant.domain}/asmApp_Api/show_dataPatientWhereId.php?isAdd=true&homeId=$homeId';
     await Dio().get(apiGetReportLooknam).then((value) {
       setState(() {
         loadStatus = false;
       });
-      print('value ==> $value');
+      // print('value ==> $value');
       if (value.toString() != 'null') {
         for (var item in json.decode(value.data)) {
-          // HomeLooknam model = HomeLooknam.fromMap(item);
-          ReportLooknam model = ReportLooknam.fromMap(item);
+          PatientModel model = PatientModel.fromMap(item);
           setState(() {
-            reportlooknams.add(model);
+            patientModels.add(model);
             userModel = UserModel.fromMap(item);
           });
         }
       } else {
         setState(() {
-          status = false;
+          status
+              ? buildShowDataPatient()
+              : Center(
+                  child: Text(
+                    'ยังไม่มีข้อมูล',
+                    style: MyConstant().textWidget4(),
+                  ),
+                );
         });
       }
     });
@@ -122,13 +135,13 @@ class _ShowInfoHomeLooknamState extends State<ShowInfoHomeLooknam> {
             preferences.setString('homeId', home!.homeId);
 
             Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => AddLooknamReport()))
+                    MaterialPageRoute(builder: (context) => AddPatient()))
                 .then((value) => loadDetailFromAPI());
           }),
       appBar: AppBar(
         backgroundColor: MyConstant.primary,
         title: Text(
-          'รายงานลูกน้ำยุงลาย',
+          'ข้อมูลชุมชน',
           style: MyConstant().textWidget2(),
         ),
         centerTitle: true,
@@ -200,7 +213,7 @@ class _ShowInfoHomeLooknamState extends State<ShowInfoHomeLooknam> {
 
   Widget showContent() {
     return status
-        ? buildShowDataLooknam()
+        ? buildShowDataPatient()
         : Center(
             child: Text(
               'ยังไม่มีข้อมูล',
@@ -209,11 +222,11 @@ class _ShowInfoHomeLooknamState extends State<ShowInfoHomeLooknam> {
           );
   }
 
-  ListView buildShowDataLooknam() {
+  ListView buildShowDataPatient() {
     return ListView.builder(
       shrinkWrap: true,
       physics: ScrollPhysics(),
-      itemCount: reportlooknams.length,
+      itemCount: patientModels.length,
       itemBuilder: (context, index) => Card(
         margin: EdgeInsets.all(8.0),
         child: ListTile(
@@ -226,35 +239,20 @@ class _ShowInfoHomeLooknamState extends State<ShowInfoHomeLooknam> {
             child: Column(
               children: <Widget>[
                 Text(
-                  'เจ้าหน้าที่บันทึกข้อมูล: ${userModel!.nameTitles}${userModel!.firstname}  ${userModel!.lastname}',
+                  'ชื่อ-นามสกุล: ${patientModels[index].nameTitle}${patientModels[index].fname}  ${patientModels[index].lname}',
                   style: MyConstant().textWidget3(),
                 ),
                 Text(
-                  'วันที่บันทึกข้อมูล: ${reportlooknams[index].dateTime}',
+                  'เพศ: ${patientModels[index].gender}',
                   style: MyConstant().h3Style(),
                 ),
-                Text('CI ${reportlooknams[index].sum}%',
-                    style: MyConstant().h1Style()),
                 Text(
-                  '(ดัชนีความชุกลูกน้ำยุงลายที่พบในบ้าน)',
-                  style: MyConstant().h3Style(),
-                ),
-                Row(
-                  children: <Widget>[
-                    Expanded(child: Divider(color: Colors.green[800])),
-                    Padding(
-                      padding: EdgeInsets.all(6),
-                    ),
-                    Expanded(child: Divider(color: Colors.green[800])),
-                  ],
+                  'โรคประจำตัว: ${patientModels[index].congenital}',
+                  style: MyConstant().h1Style(),
                 ),
                 Text(
-                  'สำรวจทั้งหมด ${reportlooknams[index].total} ภาชนะ',
-                  style: MyConstant().h2Style(),
-                ),
-                Text(
-                  'จุดที่พบลูกน้ำ ${reportlooknams[index].amount} ภาชนะ',
-                  style: MyConstant().h2Style(),
+                  'ประเภทผู้ป่วย: ${patientModels[index].typepatient}',
+                  style: MyConstant().h1Style(),
                 ),
                 Container(
                   margin: EdgeInsets.only(top: 16),
@@ -299,67 +297,68 @@ class _ShowInfoHomeLooknamState extends State<ShowInfoHomeLooknam> {
     showDialog(
       context: context,
       builder: (context) => Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-          child: SimpleDialog(
-            title: ListTile(
-              leading: ShowImage(path: MyConstant.aosormor),
-              title: ShowTitle(
-                title: 'คุณต้องการลบข้อมูลใช่หรือไม่',
-                textStyle: MyConstant().textWidget(),
-              ),
-              subtitle: ShowTitle(
-                  title: 'กดตกลงเพื่อลบข้อมูล',
-                  textStyle: MyConstant().h3Style()),
+        padding: const EdgeInsets.symmetric(horizontal: 8),
+        child: SimpleDialog(
+          title: ListTile(
+            leading: ShowImage(path: MyConstant.aosormor),
+            title: ShowTitle(
+              title: 'คุณต้องการลบข้อมูลใช่หรือไม่',
+              textStyle: MyConstant().textWidget(),
             ),
-            children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  Container(
-                    margin: EdgeInsets.only(top: 15),
-                    width: 130,
-                    height: 40,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        primary: Colors.red, // background
-                        onPrimary: Colors.white, // foreground
-                      ),
-                      onPressed: () => Navigator.pop(context),
-                      child: Text(
-                        'ยกเลิก',
-                        style: MyConstant().textWidget2(),
-                      ),
+            subtitle: ShowTitle(
+                title: 'กดตกลงเพื่อลบข้อมูล',
+                textStyle: MyConstant().h3Style()),
+          ),
+          children: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                Container(
+                  margin: EdgeInsets.only(top: 15),
+                  width: 130,
+                  height: 40,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.red, // background
+                      onPrimary: Colors.white, // foreground
+                    ),
+                    onPressed: () => Navigator.pop(context),
+                    child: Text(
+                      'ยกเลิก',
+                      style: MyConstant().textWidget2(),
                     ),
                   ),
-                  Container(
-                    margin: EdgeInsets.only(top: 15),
-                    width: 130,
-                    height: 40,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        primary: Colors.green, // background
-                        onPrimary: Colors.white, // foreground
-                      ),
-                      onPressed: () async {
-                        // Navigator.pop(context);
-                        String apiDelete =
-                            '${MyConstant.domain}/asm_api/deleteReportLooknamWhereId.php?isAdd=true&reportId=$reportId';
-                        await Dio().get(apiDelete).then((value) {
-                          Navigator.pop(context);
-                          loadDetailFromAPI();
-                        });
-                        print('delete ==> $apiDelete ');
-                      },
-                      child: Text(
-                        'ยืนยัน',
-                        style: MyConstant().textWidget2(),
-                      ),
+                ),
+                Container(
+                  margin: EdgeInsets.only(top: 15),
+                  width: 130,
+                  height: 40,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.green, // background
+                      onPrimary: Colors.white, // foreground
+                    ),
+                    onPressed: () async {
+                      // Navigator.pop(context);
+                      String apiDelete =
+                          '${MyConstant.domain}/asm_api/deleteReportLooknamWhereId.php?isAdd=true&reportId=$reportId';
+                      await Dio().get(apiDelete).then((value) {
+                        Navigator.pop(context);
+                        loadDetailFromAPI();
+                      });
+                      print('delete ==> $apiDelete ');
+                    },
+                    child: Text(
+                      'ยืนยัน',
+                      style: MyConstant().textWidget2(),
                     ),
                   ),
-                ],
-              ),
-            ],
-          )),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
