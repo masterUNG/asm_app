@@ -48,6 +48,7 @@ class MyConstant {
   static String cartireicon = 'images/cartire.png';
   static String washicon = 'images/wash.png';
   static String othericon = 'images/ellipsis.png';
+  static String successicon = 'images/success.png';
   //Style
 
   TextStyle headStyle() => TextStyle(

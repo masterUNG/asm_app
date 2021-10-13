@@ -47,6 +47,7 @@ dependencies:
   find_dropdown: ^1.0.0
   simple_autocomplete_formfield: ^0.3.0
   searchable_dropdown: ^1.1.3
+  im_stepper: ^0.1.3
 
 
 

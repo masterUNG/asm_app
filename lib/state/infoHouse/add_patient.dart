@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:asm_app/models/congenital_model.dart';
 import 'package:asm_app/models/home_model.dart';
 import 'package:asm_app/models/patient_model.dart';
 import 'package:asm_app/state/infoHouse/add_congenitalPatient.dart';
@@ -33,7 +34,7 @@ class _AddPatientState extends State<AddPatient> {
   String? height;
   String? tell;
   String? address;
-  String? congenital;
+  // String? congenital;
   String? typepatient;
   String? dateTime;
 
@@ -80,9 +81,33 @@ class _AddPatientState extends State<AddPatient> {
   List listItempt = ['ทั่วไป', 'ติดเตียง', 'ผู้สูงอายุ', 'ผู้ป่วยเรื้อรัง'];
   String dropdownValuept = 'ทั่วไป';
 
-  List<String> added = [];
-  String currentText = "";
-  GlobalKey<AutoCompleteTextFieldState<String>> key = GlobalKey();
+// โรคประจำตัว
+  CongenitalModel? congenitals;
+  String? listCongenital;
+  String myValue = 'โรคประจำตัว';
+  List<CongenitalModel> congenital = [];
+  List<CongenitalModel> listcongenital = [];
+
+  Future showCongenital() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    List<String>? data = preferences.getStringList('data');
+    preferences.setString('congenitalId', '');
+    String congenitalId = data![0];
+
+    String apiShowCongenital =
+        '${MyConstant.domain}/asmApp_Api/getAllCongenital.php?isAdd=true&congenitalId=$congenitalId';
+
+    await Dio().get(apiShowCongenital).then((value) {
+      List<String> data = [];
+      for (var item in json.decode(value.data)) {
+        CongenitalModel model = CongenitalModel.fromMap(item);
+        data.add(model.congenitalId);
+        setState(() {
+          congenital.add(model);
+        });
+      }
+    });
+  }
 
   ScrollController scrollController = ScrollController();
   int searchHomeListView = 1;
@@ -99,6 +124,7 @@ class _AddPatientState extends State<AddPatient> {
         });
       }
     });
+    showCongenital();
   }
 
   Future<Null> showDataHomeFromServer() async {
@@ -282,7 +308,6 @@ class _AddPatientState extends State<AddPatient> {
                 child: Form(
                   key: formkey,
                   child: Container(
-                    
                     height: MediaQuery.of(context).size.height * 0.5,
                     // padding:
                     //     EdgeInsets.symmetric(horizontal: 2.0, vertical: 2.0),
@@ -350,57 +375,76 @@ class _AddPatientState extends State<AddPatient> {
                   ),
                 );
               }).toList(),
+              // items: <String>['ทั่วไป', 'ติดเตียง', 'สูงอายุ', 'โรคเรื้อรัง']
+              //     .map<DropdownMenuItem<String>>((String value) {
+              //   return DropdownMenuItem<String>(
+              //     value: value,
+              //     child: Text(
+              //       value,
+              //       style: MyConstant().textWidget3(),
+              //     ),
+              //   );
+              // }).toList(),
             ),
           ),
         ]);
   }
-
-  Row buildcongenital(BoxConstraints constraints) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Column(
-          children: <Widget>[
-            Container(
-              child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => AddCongenitalPatient(),
-                      ),
-                    );
-                  },
-                  child: Text(
-                    'ค้นหาโรคประจำตัว',
-                    style: MyConstant().textWidget2(),
-                  )),
+// ตรงที่ติดปัญหาาาาาค่ะ 
+  Widget buildcongenital(BoxConstraints constraints) {
+    return Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          Container(
+            margin: EdgeInsets.only(top: 16),
+            child: Text(
+              'โรคประจำตัว',
+              style: MyConstant().textWidget3(),
             ),
-            Container(
-              width: constraints.maxWidth * 0.95,
-              child: TextFormField(
-                style: MyConstant().textWidget3(),
-                controller: congenitalController,
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return 'กรุณากรอกข้อมูลลงในช่องว่าง';
-                  } else {
-                    return null;
-                  }
-                },
-                decoration: InputDecoration(
-                  labelText: 'โรคประจำตัว :',
-                  labelStyle: MyConstant().textWidget4(),
-                  prefixIcon: Icon(
-                    Icons.health_and_safety_outlined,
-                  ),
-                ),
+          ),
+          Container(
+            margin: EdgeInsets.only(top: 16),
+            width: constraints.maxWidth * 0.95,
+            child: DropdownButton<String>(
+              value: myValue,
+              icon: const Icon(Icons.arrow_downward),
+              iconSize: 24,
+              elevation: 16,
+              style: const TextStyle(color: Colors.deepPurple),
+              underline: Container(
+                height: 2,
+                color: Colors.deepPurpleAccent,
               ),
-            )
-          ],
-        ),
-      ],
-    );
+              onChanged: (String? newValue) {
+                setState(() {
+                  myValue = newValue!;
+                  showCongenital();
+                  print(myValue);
+                });
+              },
+              items: <CongenitalModel>[]
+                  .map<DropdownMenuItem<String>>((CongenitalModel value) {
+                return DropdownMenuItem<String>(
+                  value: listCongenital,
+                  child: Text(
+                    '${congenitals!.congenitalName}',
+                    style: MyConstant().textWidget3(),
+                  ),
+                );
+              }).toList(),
+
+              // items: <String>['ทั่วไป', 'ติดเตียง', 'สูงอายุ', 'โรคเรื้อรัง']
+              //     .map<DropdownMenuItem<String>>((String value) {
+              //   return DropdownMenuItem<String>(
+              //     value: value,
+              //     child: Text(
+              //       value,
+              //       style: MyConstant().textWidget3(),
+              //     ),
+              //   );
+              // }).toList(),
+            ),
+          ),
+        ]);
   }
 
   Widget buildHouseNo(BoxConstraints constraints) {
